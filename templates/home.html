@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>School Management</title>
+    <style>
+      :root {
+        --bg: #f5f1ea;
+        --ink: #1a1a1a;
+        --muted: #6b6b6b;
+        --accent: #0d6b5f;
+        --card: #ffffff;
+        --border: #e3ddd2;
+      }
+      body {
+        margin: 0;
+        font-family: "Georgia", "Times New Roman", serif;
+        color: var(--ink);
+        background: radial-gradient(circle at 15% 20%, #e6f1ec, transparent 40%),
+          radial-gradient(circle at 80% 10%, #efe7da, transparent 35%),
+          var(--bg);
+        min-height: 100vh;
+      }
+      .wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 56px 24px 80px;
+      }
+      header {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+      h1 {
+        font-size: 42px;
+        line-height: 1.05;
+        margin: 0;
+      }
+      p.lead {
+        font-size: 18px;
+        color: var(--muted);
+        margin: 0;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        margin-top: 28px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 18px 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      }
+      .card h2 {
+        font-size: 18px;
+        margin: 0 0 8px;
+      }
+      .card a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .card a:hover {
+        text-decoration: underline;
+      }
+      .badge {
+        display: inline-block;
+        background: #e8f3f0;
+        color: #0b4f46;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      footer {
+        margin-top: 36px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <span class="badge">SaaS scolaire</span>
+        <h1>Bienvenue sur votre plateforme School Management</h1>
+        <p class="lead">
+          Acces rapide aux modules essentiels. Connectez-vous via l'administration pour commencer.
+        </p>
+      </header>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Administration</h2>
+          <p><a href="/admin/">Ouvrir le back-office</a></p>
+        </article>
+        <article class="card">
+          <h2>Comptes</h2>
+          <p><a href="/accounts/">Module comptes</a></p>
+        </article>
+        <article class="card">
+          <h2>Etudiants</h2>
+          <p><a href="/students/">Module etudiants</a></p>
+        </article>
+        <article class="card">
+          <h2>Academics</h2>
+          <p><a href="/academics/">Module academic</a></p>
+        </article>
+      </section>
+
+      <footer>
+        <span>Si une page n'existe pas encore, verifiez la configuration des routes Django.</span>
+      </footer>
+    </div>
+  </body>
+</html>
