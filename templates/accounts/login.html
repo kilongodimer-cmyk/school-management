@@ -1,0 +1,103 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Connexion - School Management{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <h1 class="text-center mb-4">
+                        <i class="fas fa-graduation-cap" style="color: #667eea;"></i> School Management
+                    </h1>
+                    
+                    <h2 class="text-center mb-4" style="font-size: 1.5rem;">Connexion</h2>
+                    
+                    {% if error %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">
+                                <i class="fas fa-user"></i> Nom d'utilisateur
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control form-control-lg" 
+                                id="id_username"
+                                name="username" 
+                                placeholder="Entrez votre nom d'utilisateur"
+                                required
+                                autofocus
+                                value="{{ username }}"
+                            >
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="id_password" class="form-label">
+                                <i class="fas fa-lock"></i> Mot de passe
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control form-control-lg" 
+                                id="id_password"
+                                name="password" 
+                                placeholder="Entrez votre mot de passe"
+                                required
+                            >
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                            <i class="fas fa-sign-in-alt"></i> Se connecter
+                        </button>
+                    </form>
+                    
+                    <hr>
+                    
+                    <div class="text-center text-muted">
+                        <small>Vous avez oublié vos identifiants ?</small><br>
+                        <small>Contactez l'administrateur</small>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">
+                        © 2026 School Management - Gestion Scolaire
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Informations de démonstration -->
+            <div class="alert alert-info mt-4">
+                <h6 class="alert-heading">
+                    <i class="fas fa-info-circle"></i> Comptes de test
+                </h6>
+                <small>
+                    <strong>Directeur :</strong> director_et001 / director123<br>
+                    <strong>Enseignant :</strong> teacher1_et001 / teacher123<br>
+                    <strong>Comptable :</strong> accountant_et001 / accountant123
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 1rem;
+    }
+</style>
+{% endblock %}

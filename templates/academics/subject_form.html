@@ -1,0 +1,142 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}{% if action == 'Créer' %}Nouvelle Matière{% else %}Modifier Matière{% endif %} | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-book"></i> {{ action }} une Matière
+            </h1>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Informations de base -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #667eea;">
+                                <i class="bi bi-info-circle"></i> Informations de Base
+                            </legend>
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="{{ form.name.id_for_label }}" class="form-label">
+                                        {{ form.name.label }}
+                                    </label>
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.code.id_for_label }}" class="form-label">
+                                        {{ form.code.label }}
+                                    </label>
+                                    {{ form.code }}
+                                    {% if form.code.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.code.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Académique -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #764ba2;">
+                                <i class="bi bi-calculator"></i> Coefficient
+                            </legend>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.coefficient.id_for_label }}" class="form-label">
+                                        {{ form.coefficient.label }}
+                                    </label>
+                                    {{ form.coefficient }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.is_active.id_for_label }}" class="form-label">
+                                        {{ form.is_active.label }}
+                                    </label>
+                                    <div class="form-check">
+                                        {{ form.is_active }}
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Description -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #f093fb;">
+                                <i class="bi bi-card-text"></i> Description
+                            </legend>
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">
+                                    {{ form.description.label }}
+                                </label>
+                                {{ form.description }}
+                            </div>
+                        </fieldset>
+
+                        <!-- Non-field errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Erreur:</strong>
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 justify-content-between">
+                            <a href="{% url 'academics:subject_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> {{ action }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Sidebar -->
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-lightbulb"></i> Aide
+                    </h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <strong>Nom:</strong> Nom complet de la matière
+                        </li>
+                        <li class="mb-2">
+                            <strong>Code:</strong> Identifiant unique (ex: MATH)
+                        </li>
+                        <li class="mb-2">
+                            <strong>Coefficient:</strong> Poids pour le calcul des moyennes
+                        </li>
+                        <li class="mb-2">
+                            <strong>Actif:</strong> Cochez pour que la matière soit disponible
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Résultats de {{ class.name }} | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-file-earmark-text"></i> Résultats - {{ class.name }}
+            </h1>
+            <p class="text-muted">Classement des élèves par trimestre</p>
+        </div>
+        <div class="col-md-4 d-flex justify-content-end gap-2">
+            <a href="{% url 'academics:class_detail' class.id %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Class Info -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-building"></i> {{ class.full_name }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Niveau</small>
+                            <strong>Niveau {{ class.level }}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Professeur Principal</small>
+                            <strong>{{ class.teacher|default:'-' }}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Élèves</small>
+                            <strong>{{ class.student_count }}/{{ class.capacity }}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted d-block">Année Académique</small>
+                            <strong>{{ class.academic_year|default:'-' }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter by Term -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-9">
+                    <label class="form-label">Sélectionner un trimestre</label>
+                    <select name="term" class="form-select" onchange="this.form.submit()">
+                        <option value="">-- Tous les trimestres --</option>
+                        {% for term in terms %}
+                            <option value="{{ term.id }}" {% if term_filter == term.id %}selected{% endif %}>
+                                {{ term.name }} ({{ term.academic_year.year }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    {% if term_filter and results %}
+        <div class="card">
+            <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ol"></i> Classement
+                </h5>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="text-align: center; width: 50px;">Rang</th>
+                            <th>Élève</th>
+                            <th>ID Étudiant</th>
+                            <th style="text-align: center;">Moyenne</th>
+                            <th>Appréciation</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                            <tr {% if result.rank == 1 %}style="background-color: #fff3cd; border-left: 4px solid #ffc107;"{% elif result.rank == 2 %}style="background-color: #e7f3ff; border-left: 4px solid #667eea;"{% elif result.rank == 3 %}style="background-color: #f3e9e9; border-left: 4px solid #999;"{% endif %}>
+                                <td style="text-align: center; font-weight: bold; font-size: 18px;">
+                                    {% if result.rank == 1 %}
+                                        <span style="color: #ffc107;">🥇 {{ result.rank }}</span>
+                                    {% elif result.rank == 2 %}
+                                        <span style="color: #667eea;">🥈 {{ result.rank }}</span>
+                                    {% elif result.rank == 3 %}
+                                        <span style="color: #999;">🥉 {{ result.rank }}</span>
+                                    {% else %}
+                                        {{ result.rank }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'academics:student_results' result.student.id %}" style="color: #667eea;">
+                                        <strong>{{ result.student.full_name }}</strong>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background-color: #764ba2;">
+                                        {{ result.student.student_id }}
+                                    </span>
+                                </td>
+                                <td style="text-align: center;">
+                                    <h5 style="margin: 0; color: #667eea;">{{ result.average }}/20</h5>
+                                </td>
+                                <td>
+                                    {% if result.rating == 'Excellent' %}
+                                        <span class="badge bg-success">{{ result.rating }}</span>
+                                    {% elif result.rating == 'Très Bien' %}
+                                        <span class="badge bg-success">{{ result.rating }}</span>
+                                    {% elif result.rating == 'Bien' %}
+                                        <span class="badge bg-info">{{ result.rating }}</span>
+                                    {% elif result.rating == 'Assez Bien' %}
+                                        <span class="badge bg-info">{{ result.rating }}</span>
+                                    {% elif result.rating == 'Passable' %}
+                                        <span class="badge bg-warning">{{ result.rating }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ result.rating }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'academics:student_results' result.student.id %}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye"></i> Voir
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% elif term_filter %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Aucun résultat pour ce trimestre.
+        </div>
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-info-circle"></i> Veuillez sélectionner un trimestre pour voir le classement.
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .badge {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    table tr {
+        transition: all 0.2s ease;
+    }
+    
+    table tbody tr:hover {
+        background-color: #f8f9fa !important;
+    }
+</style>
+{% endblock %}

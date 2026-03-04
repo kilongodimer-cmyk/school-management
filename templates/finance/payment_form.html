@@ -1,0 +1,41 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">Enregistrer un paiement</div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Élève</label>
+            {{ form.student|as_crispy_field }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Montant</label>
+            {{ form.amount }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Type</label>
+            {{ form.payment_type }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Date</label>
+            {{ form.payment_date }}
+          </div>
+          <div class="col-12">
+            <label class="form-label">Notes</label>
+            {{ form.notes }}
+          </div>
+        </div>
+        <div class="mt-3">
+          <a class="btn btn-secondary" href="{% url 'finance:payments_list' %}">Annuler</a>
+          <button class="btn btn-primary" type="submit">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Gestion des Élèves - School Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-graduation-cap"></i> Gestion des Élèves
+        </h1>
+        <div>
+            <a href="{% url 'students:student_statistics' %}" class="btn btn-info">
+                <i class="fas fa-chart-bar"></i> Statistiques
+            </a>
+            <a href="{% url 'students:student_export' %}" class="btn btn-secondary">
+                <i class="fas fa-download"></i> Exporter CSV
+            </a>
+            <a href="{% url 'students:student_create' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Ajouter un élève
+            </a>
+        </div>
+    </div>
+    
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <!-- Filtres et Recherche -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" id="filter-form" class="row g-3">
+                <!-- Recherche -->
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Rechercher</label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           placeholder="Nom ou numéro d'élève..." value="{{ search_query }}">
+                </div>
+                
+                <!-- Filtre par classe -->
+                <div class="col-md-3">
+                    <label for="grade" class="form-label">Classe</label>
+                    <input type="text" class="form-control" id="grade" name="grade" 
+                           placeholder="Ex: 6ème A..." value="{{ grade_filter }}">
+                </div>
+                
+                <!-- Filtre par statut -->
+                <div class="col-md-2">
+                    <label for="status" class="form-label">Statut</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">Tous</option>
+                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Actif</option>
+                        <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactif</option>
+                        <option value="graduated" {% if request.GET.status == 'graduated' %}selected{% endif %}>Diplômé</option>
+                        <option value="suspended" {% if request.GET.status == 'suspended' %}selected{% endif %}>Suspendu</option>
+                    </select>
+                </div>
+                
+                <!-- Filtre par genre -->
+                <div class="col-md-2">
+                    <label for="gender" class="form-label">Genre</label>
+                    <select class="form-select" id="gender" name="gender">
+                        <option value="">Tous</option>
+                        <option value="M" {% if request.GET.gender == 'M' %}selected{% endif %}>Masculin</option>
+                        <option value="F" {% if request.GET.gender == 'F' %}selected{% endif %}>Féminin</option>
+                        <option value="O" {% if request.GET.gender == 'O' %}selected{% endif %}>Autre</option>
+                    </select>
+                </div>
+                
+                <!-- Tri -->
+                <div class="col-md-2">
+                    <label for="sort_by" class="form-label">Trier par</label>
+                    <select class="form-select" id="sort_by" name="sort_by">
+                        <option value="last_name" {% if request.GET.sort_by == 'last_name' or not request.GET.sort_by %}selected{% endif %}>Nom (A-Z)</option>
+                        <option value="-last_name" {% if request.GET.sort_by == '-last_name' %}selected{% endif %}>Nom (Z-A)</option>
+                        <option value="-gpa" {% if request.GET.sort_by == '-gpa' %}selected{% endif %}>Moyenne ↓</option>
+                        <option value="gpa" {% if request.GET.sort_by == 'gpa' %}selected{% endif %}>Moyenne ↑</option>
+                        <option value="-created_at" {% if request.GET.sort_by == '-created_at' %}selected{% endif %}>Récent</option>
+                    </select>
+                </div>
+                
+                <!-- Boutons -->
+                <div class="col-12">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Filtrer
+                        </button>
+                        <a href="{% url 'students:student_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-redo"></i> Réinitialiser
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Statistiques rapides -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="card-title text-primary">{{ total_count }}</h4>
+                    <p class="text-muted mb-0">Élèves trouvés</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tableau des élèves -->
+    <div class="card">
+        <div class="card-body">
+            {% if students %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Numéro</th>
+                                <th>Nom</th>
+                                <th>Classe</th>
+                                <th>Genre</th>
+                                <th>Moyenne</th>
+                                <th>Parent</th>
+                                <th>Statut</th>
+                                <th>Inscription</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td>
+                                        <code style="background-color: #f0f0f0; padding: 3px 6px; border-radius: 3px;">
+                                            {{ student.student_id }}
+                                        </code>
+                                    </td>
+                                    <td>
+                                        <strong>{{ student.full_name }}</strong>
+                                        {% if student.email %}
+                                            <br><small class="text-muted">{{ student.email }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ student.grade }}</span>
+                                    </td>
+                                    <td>
+                                        {% if student.gender == 'M' %}
+                                            <i class="fas fa-mars" style="color: #007bff;"></i> Masculin
+                                        {% elif student.gender == 'F' %}
+                                            <i class="fas fa-venus" style="color: #ff1493;"></i> Féminin
+                                        {% else %}
+                                            <i class="fas fa-genderless"></i> Autre
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if student.gpa %}
+                                            {% if student.gpa >= 16 %}
+                                                <span class="badge bg-success">{{ student.gpa|floatformat:2 }}</span>
+                                            {% elif student.gpa >= 12 %}
+                                                <span class="badge bg-info">{{ student.gpa|floatformat:2 }}</span>
+                                            {% elif student.gpa >= 10 %}
+                                                <span class="badge bg-warning">{{ student.gpa|floatformat:2 }}</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">{{ student.gpa|floatformat:2 }}</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="badge bg-secondary">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ student.parent_name|default:"N/A" }}
+                                    </td>
+                                    <td>
+                                        {% if student.status == 'active' %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% elif student.status == 'inactive' %}
+                                            <span class="badge bg-secondary">Inactif</span>
+                                        {% elif student.status == 'graduated' %}
+                                            <span class="badge bg-info">Diplômé</span>
+                                        {% elif student.status == 'suspended' %}
+                                            <span class="badge bg-danger">Suspendu</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ student.created_at|date:"d/m/Y" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{% url 'students:student_detail' student.id %}" class="btn btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'students:student_edit' student.id %}" class="btn btn-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'students:student_delete' student.id %}" class="btn btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">Première</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Précédent</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Suivant</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Dernière</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Aucun élève trouvé
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

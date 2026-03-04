@@ -1,0 +1,133 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Dashboard Admin - School Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">
+        <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+    </h1>
+    
+    <!-- Statistiques Principales -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-primary">
+                <div class="stat-value">{{ total_schools }}</div>
+                <div class="stat-label">Écoles</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-success">
+                <div class="stat-value">{{ total_users }}</div>
+                <div class="stat-label">Utilisateurs</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-warning">
+                <div class="stat-value">{{ active_users }}</div>
+                <div class="stat-label">Utilisateurs Actifs</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-danger">
+                <div class="stat-value">{{ total_users|add:"-active_users" }}</div>
+                <div class="stat-label">Inactifs</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Liste des Écoles -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-school"></i> Écoles Système
+                </div>
+                <div class="card-body">
+                    {% if schools %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Code</th>
+                                        <th>Directeur</th>
+                                        <th>Utilisateurs</th>
+                                        <th>Statut</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for school in schools %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ school.name }}</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ school.code }}</span>
+                                            </td>
+                                            <td>{{ school.director_name|default:"-" }}</td>
+                                            <td>
+                                                <span class="badge bg-primary">{{ school.users.count }}</span>
+                                            </td>
+                                            <td>
+                                                {% if school.is_active %}
+                                                    <span class="badge bg-success">Actif</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">Inactif</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'accounts:school_detail' school.id %}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i> Voir
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucune école enregistrée</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Utilisateurs par Rôle -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-pie-chart"></i> Utilisateurs par Rôle
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        {% for role, count in users_by_role.items %}
+                            <li class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        {% if role == 'superadmin' %}
+                                            <span class="badge badge-role badge-superadmin">Super Admin</span>
+                                        {% elif role == 'director' %}
+                                            <span class="badge badge-role badge-director">Directeur</span>
+                                        {% elif role == 'teacher' %}
+                                            <span class="badge badge-role badge-teacher">Enseignant</span>
+                                        {% elif role == 'accountant' %}
+                                            <span class="badge badge-role badge-accountant">Comptable</span>
+                                        {% elif role == 'student' %}
+                                            <span class="badge badge-role badge-student">Étudiant</span>
+                                        {% elif role == 'parent' %}
+                                            <span class="badge badge-role badge-parent">Parent</span>
+                                        {% endif %}
+                                    </span>
+                                    <span class="badge bg-primary">{{ count }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

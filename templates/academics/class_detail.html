@@ -1,0 +1,182 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Détail Classe | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-building"></i> {{ class.name }}
+            </h1>
+            <p class="text-muted">Niveau {{ class.level }} - {{ class.full_name }}</p>
+        </div>
+        <div class="col-md-4 d-flex justify-content-end gap-2">
+            <a href="{% url 'academics:class_update' class.id %}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            <a href="{% url 'academics:class_delete' class.id %}" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Supprimer
+            </a>
+            <a href="{% url 'academics:class_list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Class Info Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Niveau</small>
+                        <strong>Niveau {{ class.level }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Salle</small>
+                        <strong>{{ class.room|default:'-' }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Professeur Principal</small>
+                        <strong>{{ class.teacher|default:'-' }}</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Année Académique</small>
+                        <strong>{{ class.academic_year|default:'-' }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Capacity Card -->
+            <div class="card mt-3">
+                <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-people"></i> Capacité</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-2">Occupation</small>
+                        <div class="progress" style="height: 25px;">
+                            {% widthratio student_count capacity 100 as percentage %}
+                            <div
+                                class="progress-bar"
+                                role="progressbar"
+                                style="width: {{ percentage }}%;
+                                       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"
+                                aria-valuenow="{{ percentage }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                            >
+                                {{ percentage }}%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <small class="text-muted d-block">Élèves</small>
+                            <h4 style="color: #667eea;">{{ student_count }}</h4>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Capacité</small>
+                            <h4 style="color: #764ba2;">{{ capacity }}</h4>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        {% if is_full %}
+                            <span class="badge bg-danger w-100">
+                                <i class="bi bi-exclamation-circle"></i> Classe Complète
+                            </span>
+                        {% else %}
+                            <span class="badge bg-success w-100">
+                                <i class="bi bi-check-circle"></i> {{ available_spots }} place(s) disponible(s)
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects List -->
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; justify-content: space-between; align-items: center;">
+                    <h5 class="mb-0"><i class="bi bi-book"></i> Matières ({{ class_subjects.count }})</h5>
+                    <a href="{% url 'academics:class_subject_create' class.id %}" class="btn btn-sm btn-light">
+                        <i class="bi bi-plus"></i> Ajouter
+                    </a>
+                </div>
+
+                {% if class_subjects %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Matière</th>
+                                    <th>Code</th>
+                                    <th>Coefficient</th>
+                                    <th>Professeur</th>
+                                    <th>Heures/Sem</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cs in class_subjects %}
+                                    <tr>
+                                        <td>
+                                            <strong style="color: #764ba2;">{{ cs.subject.name }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge" style="background-color: #667eea;">
+                                                {{ cs.subject.code }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge" style="background-color: #f093fb;">
+                                                {{ cs.subject.coefficient }}
+                                            </span>
+                                        </td>
+                                        <td>{{ cs.teacher|default:'-' }}</td>
+                                        <td>
+                                            <strong>{{ cs.hours_per_week }}h</strong>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a
+                                                    href="{% url 'academics:class_subject_update' class.id cs.subject.id %}"
+                                                    class="btn btn-warning"
+                                                    title="Modifier"
+                                                >
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a
+                                                    href="{% url 'academics:class_subject_delete' class.id cs.subject.id %}"
+                                                    class="btn btn-danger"
+                                                    title="Supprimer"
+                                                >
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="card-body">
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-info-circle"></i> Aucune matière assignée.
+                            <a href="{% url 'academics:class_subject_create' class.id %}">Ajouter une matière</a>
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

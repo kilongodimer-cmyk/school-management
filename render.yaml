@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: school-management
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn school_management.wsgi:application --bind 0.0.0.0:$PORT --workers 3
+    deployCommand: python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py createsuperuser --noinput || true
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: school_management.settings_production
+      - key: SECRET_KEY
+        value: ""
+      - key: DATABASE_URL
+        value: ""
+      - key: ALLOWED_HOSTS
+        value: ""
+      - key: CSRF_TRUSTED_ORIGINS
+        value: ""
+      - key: EMAIL_HOST
+        value: ""
+      - key: EMAIL_PORT
+        value: ""
+      - key: EMAIL_HOST_USER
+        value: ""
+      - key: EMAIL_HOST_PASSWORD
+        value: ""
+      - key: DEFAULT_FROM_EMAIL
+        value: ""
+      - key: SECURE_SSL_REDIRECT
+        value: "1"
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: ""
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: ""
+      - key: DJANGO_SUPERUSER_PASSWORD
+        value: ""

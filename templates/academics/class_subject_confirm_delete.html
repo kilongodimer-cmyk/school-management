@@ -1,0 +1,87 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Supprimer Matière de Classe | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-exclamation-triangle"></i> Confirmer la Suppression
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Warning Alert -->
+            <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle me-3" style="font-size: 24px;"></i>
+                <div>
+                    <strong>Attention!</strong> Vous êtes sur le point de supprimer cette matière de la classe.
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card mb-4">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Détails</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Classe</small>
+                                <strong style="font-size: 16px; color: #667eea;">{{ class_subject.class_obj.name }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Matière</small>
+                                <strong style="font-size: 16px; color: #764ba2;">{{ class_subject.subject.name }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Coefficient</small>
+                                <strong style="color: #f093fb;">{{ class_subject.subject.coefficient }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Heures/Semaine</small>
+                                <strong>{{ class_subject.hours_per_week }}h</strong>
+                            </div>
+                        </div>
+                    </div>
+                    {% if class_subject.teacher %}
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Professeur</small>
+                                    <strong>{{ class_subject.teacher }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Confirmation Form -->
+            <form method="POST" class="d-flex gap-2 justify-content-between">
+                {% csrf_token %}
+                <a href="{% url 'academics:class_detail' class.id %}" class="btn btn-lg btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Annuler
+                </a>
+                <button type="submit" class="btn btn-lg btn-danger">
+                    <i class="bi bi-trash"></i> Supprimer la Matière
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

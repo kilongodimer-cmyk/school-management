@@ -1,0 +1,140 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}{% if action == 'Ajouter' %}Ajouter Matière{% else %}Modifier Matière{% endif %} | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-book"></i> {{ action }} une Matière à {{ class.name }}
+            </h1>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Class Info -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #667eea;">
+                                <i class="bi bi-building"></i> Classe
+                            </legend>
+                            <div class="alert alert-info mb-0">
+                                <strong>{{ class.name }}</strong> - Niveau {{ class.level }}
+                            </div>
+                        </fieldset>
+
+                        <!-- Subject Selection -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #764ba2;">
+                                <i class="bi bi-book"></i> Matière
+                            </legend>
+                            <div class="mb-3">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label">
+                                    {{ form.subject.label }}
+                                </label>
+                                {{ form.subject }}
+                                {% if form.subject.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.subject.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </fieldset>
+
+                        <!-- Schedule -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #f093fb;">
+                                <i class="bi bi-calendar"></i> Planning
+                            </legend>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.hours_per_week.id_for_label }}" class="form-label">
+                                        {{ form.hours_per_week.label }}
+                                    </label>
+                                    {{ form.hours_per_week }}
+                                    {% if form.hours_per_week.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.hours_per_week.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.teacher.id_for_label }}" class="form-label">
+                                        {{ form.teacher.label }}
+                                    </label>
+                                    {{ form.teacher }}
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Status -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3">Statut</legend>
+                            <div class="form-check">
+                                <label for="{{ form.is_active.id_for_label }}" class="form-check-label">
+                                    {{ form.is_active }}
+                                    {{ form.is_active.label }}
+                                </label>
+                            </div>
+                        </fieldset>
+
+                        <!-- Non-field errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Erreur:</strong>
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 justify-content-between">
+                            <a href="{% url 'academics:class_detail' class.id %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> {{ action }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Sidebar -->
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-lightbulb"></i> Aide
+                    </h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <strong>Matière:</strong> Choisir la matière à ajouter
+                        </li>
+                        <li class="mb-2">
+                            <strong>Heures/Semaine:</strong> Nombre d'heures de cours par semaine
+                        </li>
+                        <li class="mb-2">
+                            <strong>Professeur:</strong> Le professeur responsable (optionnel)
+                        </li>
+                        <li class="mb-2">
+                            <strong>Actif:</strong> Cochez pour rendre la matière disponible
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

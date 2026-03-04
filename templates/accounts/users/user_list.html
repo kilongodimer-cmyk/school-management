@@ -1,0 +1,132 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Gestion des Utilisateurs - School Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-users"></i> Gestion des Utilisateurs
+        </h1>
+        <a href="#" class="btn btn-success">
+            <i class="fas fa-plus"></i> Ajouter un utilisateur
+        </a>
+    </div>
+    
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="role_filter" class="form-label">Filtrer par rôle</label>
+                    <select class="form-select" id="role_filter" name="role">
+                        <option value="">Tous les rôles</option>
+                        {% for role_value, role_label in roles %}
+                            <option value="{{ role_value }}" {% if request.GET.role == role_value %}selected{% endif %}>
+                                {{ role_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label for="status_filter" class="form-label">Filtrer par statut</label>
+                    <select class="form-select" id="status_filter" name="status">
+                        <option value="">Tous les statuts</option>
+                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Actif</option>
+                        <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactif</option>
+                        <option value="banned" {% if request.GET.status == 'banned' %}selected{% endif %}>Suspendu</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Liste des utilisateurs -->
+    <div class="card">
+        <div class="card-body">
+            {% if users %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Rôle</th>
+                                <th>Statut</th>
+                                <th>Vérification</th>
+                                <th>Création</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                    </td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        {% if user.role == 'teacher' %}
+                                            <span class="badge badge-role badge-teacher">Enseignant</span>
+                                        {% elif user.role == 'student' %}
+                                            <span class="badge badge-role badge-student">Étudiant</span>
+                                        {% elif user.role == 'director' %}
+                                            <span class="badge badge-role badge-director">Directeur</span>
+                                        {% elif user.role == 'accountant' %}
+                                            <span class="badge badge-role badge-accountant">Comptable</span>
+                                        {% elif user.role == 'parent' %}
+                                            <span class="badge badge-role badge-parent">Parent</span>
+                                        {% elif user.role == 'superadmin' %}
+                                            <span class="badge badge-role badge-superadmin">Super Admin</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.is_banned %}
+                                            <span class="badge bg-danger">Suspendu</span>
+                                        {% elif user.is_active %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.is_verified %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check"></i> Vérifié
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock"></i> En attente
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ user.created_at|date:"d/m/Y" }}</small>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'accounts:user_detail' user.id %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> Voir
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Aucun utilisateur trouvé
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

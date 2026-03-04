@@ -1,0 +1,188 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Matières | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-book"></i> Gestion des Matières
+            </h1>
+            <p class="text-muted">Liste complète des matières disponibles</p>
+        </div>
+        <div class="col-md-4 d-flex justify-content-end gap-2">
+            <a href="{% url 'academics:subject_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Nouvelle Matière
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-left-info">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Total Matières</h6>
+                    <h2 class="mb-0" style="color: #667eea;">{{ total_subjects }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-left-success">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Actives</h6>
+                    <h2 class="mb-0" style="color: #28a745;">{{ total_subjects }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-left-warning">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Coefficients Moyens</h6>
+                    <h2 class="mb-0" style="color: #f093fb;">2.3</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Rechercher une matière..."
+                        value="{{ search_query }}"
+                    >
+                </div>
+                <div class="col-md-3">
+                    <select name="coefficient" class="form-select">
+                        <option value="">Tous les coefficients</option>
+                        {% for coeff_val, coeff_label in coefficients %}
+                            <option value="{{ coeff_val }}" {% if coeff_filter == coeff_label %}selected{% endif %}>
+                                Coefficient {{ coeff_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">Tous</option>
+                        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Actives</option>
+                        <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactives</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Subjects List -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <tr>
+                        <th>Matière</th>
+                        <th>Code</th>
+                        <th>Coefficient</th>
+                        <th>Description</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if subjects %}
+                        {% for subject in subjects %}
+                            <tr>
+                                <td>
+                                    <strong style="color: #764ba2;">{{ subject.name }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background-color: #667eea;">
+                                        {{ subject.code }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background-color: #f093fb;">
+                                        {{ subject.coefficient }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ subject.description|truncatewords:10 }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {% if subject.is_active %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle"></i> Actif
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-x-circle"></i> Inactif
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a
+                                            href="{% url 'academics:subject_detail' subject.id %}"
+                                            class="btn btn-info"
+                                            title="Voir"
+                                        >
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a
+                                            href="{% url 'academics:subject_update' subject.id %}"
+                                            class="btn btn-warning"
+                                            title="Modifier"
+                                        >
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a
+                                            href="{% url 'academics:subject_delete' subject.id %}"
+                                            class="btn btn-danger"
+                                            title="Supprimer"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <p class="text-muted mb-0">Aucune matière trouvée</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-left-info {
+        border-left: 4px solid #667eea !important;
+    }
+    .border-left-success {
+        border-left: 4px solid #28a745 !important;
+    }
+    .border-left-warning {
+        border-left: 4px solid #f093fb !important;
+    }
+</style>
+{% endblock %}

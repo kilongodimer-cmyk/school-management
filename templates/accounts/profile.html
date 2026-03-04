@@ -1,0 +1,142 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Mon Profil - School Management{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="mb-4">
+                <i class="fas fa-user-circle"></i> Mon Profil
+            </h1>
+            
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-image"></i> Photo de Profil
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            {% if user.profile_photo %}
+                                <img src="{{ user.profile_photo.url }}" alt="Photo de profil" class="rounded-circle" width="150" height="150">
+                            {% else %}
+                                <img src="https://via.placeholder.com/150" alt="Pas de photo" class="rounded-circle" width="150" height="150">
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_profile_photo" class="form-label">
+                                <i class="fas fa-cloud-upload-alt"></i> Télécharger une nouvelle photo
+                            </label>
+                            <input type="file" class="form-control" id="id_profile_photo" name="profile_photo" accept="image/*">
+                            <small class="form-text text-muted">Formats acceptés : JPG, PNG</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-info-circle"></i> Informations Personnelles
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_first_name" class="form-label">Prénom</label>
+                                <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ user.first_name }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_last_name" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ user.last_name }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="id_email" name="email" value="{{ user.email }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_phone" class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" id="id_phone" name="phone" value="{{ user.phone|default:'' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_bio" class="form-label">Biographie</label>
+                            <textarea class="form-control" id="id_bio" name="bio" rows="3" maxlength="500">{{ user.bio|default:'' }}</textarea>
+                            <small class="form-text text-muted">500 caractères maximum</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-map-marker-alt"></i> Adresse
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="id_address" class="form-label">Adresse</label>
+                            <input type="text" class="form-control" id="id_address" name="address" value="{{ user.address|default:'' }}">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_postal_code" class="form-label">Code Postal</label>
+                                <input type="text" class="form-control" id="id_postal_code" name="postal_code" value="{{ user.postal_code|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_city" class="form-label">Ville</label>
+                                <input type="text" class="form-control" id="id_city" name="city" value="{{ user.city|default:'' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_country" class="form-label">Pays</label>
+                            <input type="text" class="form-control" id="id_country" name="country" value="{{ user.country|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-briefcase"></i> Informations Professionnelles
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Rôle :</strong> 
+                            {% if user.role == 'superadmin' %}
+                                <span class="badge badge-role badge-superadmin">Super Admin</span>
+                            {% elif user.role == 'director' %}
+                                <span class="badge badge-role badge-director">Directeur</span>
+                            {% elif user.role == 'teacher' %}
+                                <span class="badge badge-role badge-teacher">Enseignant</span>
+                            {% elif user.role == 'accountant' %}
+                                <span class="badge badge-role badge-accountant">Comptable</span>
+                            {% elif user.role == 'student' %}
+                                <span class="badge badge-role badge-student">Étudiant</span>
+                            {% elif user.role == 'parent' %}
+                                <span class="badge badge-role badge-parent">Parent</span>
+                            {% endif %}
+                        </p>
+                        
+                        {% if user.school %}
+                            <p><strong>École :</strong> {{ user.school.name }}</p>
+                        {% endif %}
+                        
+                        <p><strong>Compte créé :</strong> {{ user.created_at|date:"d/m/Y à H:i" }}</p>
+                        <p><strong>Dernière modification :</strong> {{ user.updated_at|date:"d/m/Y à H:i" }}</p>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save"></i> Enregistrer les modifications
+                    </button>
+                    <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

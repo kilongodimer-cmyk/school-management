@@ -1,0 +1,78 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Dashboard Étudiant - School Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">
+        <i class="fas fa-graduation-cap"></i> Dashboard
+    </h1>
+    
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> {{ message }}
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user"></i> Mes Informations
+                </div>
+                <div class="card-body">
+                    <p><strong>Nom :</strong> {{ user.get_full_name }}</p>
+                    <p><strong>Email :</strong> {{ user.email }}</p>
+                    <p><strong>Rôle :</strong>
+                        {% if user.role == 'student' %}
+                            <span class="badge badge-role badge-student">Étudiant</span>
+                        {% else %}
+                            <span class="badge badge-role badge-parent">Parent</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>École :</strong> {{ school.name }}</p>
+                    <p><strong>Statut :</strong>
+                        {% if user.is_verified %}
+                            <span class="badge bg-success">Vérifié</span>
+                        {% else %}
+                            <span class="badge bg-warning">Non vérifié</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-school"></i> Votre École
+                </div>
+                <div class="card-body">
+                    <p><strong>{{ school.name }}</strong></p>
+                    <p><small class="text-muted">{{ school.code }}</small></p>
+                    <p><small class="text-muted">{{ school.email }}</small></p>
+                    <hr>
+                    <p class="mb-0"><strong>Directeur :</strong> <br>{{ school.director_name }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Actions rapides -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-tasks"></i> Actions Rapides
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-edit"></i> Voir Mon Profil
+                    </a>
+                    <a href="{% url 'accounts:change_password' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-key"></i> Changer Mon Mot de Passe
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

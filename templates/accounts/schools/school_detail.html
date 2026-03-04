@@ -1,0 +1,376 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}{{ school.name }} - School Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-school"></i> {{ school.name }}
+        </h1>
+        <div>
+            <a href="{% url 'accounts:school_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <!-- En-tête de l'école -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-info-circle"></i> Informations générales
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Nom</label>
+                            <strong>{{ school.name }}</strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Code</label>
+                            <strong><code>{{ school.code }}</code></strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Email</label>
+                            <strong>{{ school.email }}</strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Téléphone</label>
+                            <strong>{{ school.phone|default:"N/A" }}</strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Site web</label>
+                            <strong>
+                                {% if school.website %}
+                                    <a href="{{ school.website }}" target="_blank">
+                                        {{ school.website }}
+                                    </a>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Statut</label>
+                            <strong>
+                                {% if school.is_active %}
+                                    <span class="badge bg-success">Actif</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactif</span>
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if school.logo %}
+                        <img src="{{ school.logo.url }}" alt="{{ school.name }}" 
+                             class="img-fluid mb-3" style="max-height: 200px;">
+                    {% else %}
+                        <div class="bg-light rounded mx-auto mb-3 d-inline-flex align-items-center justify-content-center" 
+                             style="width: 150px; height: 150px;">
+                            <i class="fas fa-school fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Localisation -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-map-marker-alt"></i> Localisation
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="text-muted small d-block">Adresse</label>
+                    <strong>{{ school.address|default:"N/A" }}</strong>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="text-muted small d-block">Code postal</label>
+                    <strong>{{ school.postal_code|default:"N/A" }}</strong>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="text-muted small d-block">Ville</label>
+                    <strong>{{ school.city|default:"N/A" }}</strong>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="text-muted small d-block">Pays</label>
+                    <strong>{{ school.country|default:"N/A" }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Capacité -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-graduation-cap"></i> Capacité des étudiants
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Étudiants</span>
+                            <strong>{{ current_students|default:0 }}/{{ school.max_students }}</strong>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: {% widthratio current_students|default:0 school.max_students 100 %}%;">
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        {% widthratio current_students|default:0 school.max_students 100 %}% de capacité utilisée
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chalkboard-user"></i> Capacité des enseignants
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Enseignants</span>
+                            <strong>{{ current_teachers|default:0 }}/{{ school.max_teachers }}</strong>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: {% widthratio current_teachers|default:0 school.max_teachers 100 %}%;">
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        {% widthratio current_teachers|default:0 school.max_teachers 100 %}% de capacité utilisée
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Utilisateurs par rôle -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-users"></i> Utilisateurs par rôle
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 text-center mb-3">
+                    <div class="bg-light p-3 rounded">
+                        <h4 class="text-success mb-2">{{ teachers_count|default:0 }}</h4>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-chalkboard-user"></i> Enseignants
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center mb-3">
+                    <div class="bg-light p-3 rounded">
+                        <h4 class="text-primary mb-2">{{ students_count|default:0 }}</h4>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-graduation-cap"></i> Étudiants
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center mb-3">
+                    <div class="bg-light p-3 rounded">
+                        <h4 class="text-warning mb-2">{{ parents_count|default:0 }}</h4>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-family"></i> Parents
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center mb-3">
+                    <div class="bg-light p-3 rounded">
+                        <h4 class="text-info mb-2">{{ accountants_count|default:0 }}</h4>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-calculator"></i> Comptables
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Directeur -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-user-tie"></i> Directeur
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if director %}
+                <div class="row">
+                    <div class="col-md-3">
+                        {% if director.profile_photo %}
+                            <img src="{{ director.profile_photo.url }}" alt="{{ director.get_full_name }}" 
+                                 class="img-fluid rounded mb-3">
+                        {% else %}
+                            <div class="bg-light rounded mb-3 d-inline-flex align-items-center justify-content-center w-100" 
+                                 style="height: 180px;">
+                                <i class="fas fa-user fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        <h5>{{ director.get_full_name|default:director.username }}</h5>
+                        <p class="text-muted">{{ director.email }}</p>
+                        <p>
+                            <strong>Téléphone:</strong> {{ director.phone|default:"N/A" }}<br>
+                            <strong>Adresse:</strong> {{ director.full_address|default:"N/A" }}
+                        </p>
+                        <a href="{% url 'accounts:user_detail' director.id %}" class="btn btn-sm btn-info">
+                            <i class="fas fa-eye"></i> Voir le profil
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> Aucun directeur assigné
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Dates -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-calendar"></i> Dates
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="text-muted small d-block">Création</label>
+                    <strong>{{ school.created_at|date:"d/m/Y à H:i" }}</strong>
+                </div>
+                <div class="col-md-6">
+                    <label class="text-muted small d-block">Dernière modification</label>
+                    <strong>{{ school.updated_at|date:"d/m/Y à H:i" }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Actions -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-cog"></i> Actions
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="btn-group" role="group">
+                <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editSchoolModal">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+                {% if school.is_active %}
+                    <form method="post" action="#" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" name="action" value="deactivate">
+                            <i class="fas fa-times"></i> Désactiver
+                        </button>
+                    </form>
+                {% else %}
+                    <form method="post" action="#" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success" name="action" value="activate">
+                            <i class="fas fa-check"></i> Activer
+                        </button>
+                    </form>
+                {% endif %}
+                <a href="{% url 'accounts:user_list' %}?school={{ school.id }}" class="btn btn-info">
+                    <i class="fas fa-users"></i> Voir les utilisateurs
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modifier école -->
+<div class="modal fade" id="editSchoolModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit"></i> Modifier l'école
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="#">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nom</label>
+                            <input type="text" class="form-control" name="name" value="{{ school.name }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Code</label>
+                            <input type="text" class="form-control" name="code" value="{{ school.code }}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="{{ school.email }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Téléphone</label>
+                            <input type="text" class="form-control" name="phone" value="{{ school.phone|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Capacité étudiants</label>
+                            <input type="number" class="form-control" name="max_students" 
+                                   value="{{ school.max_students }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Capacité enseignants</label>
+                            <input type="number" class="form-control" name="max_teachers" 
+                                   value="{{ school.max_teachers }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary" name="action" value="update">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Classes | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-building"></i> Gestion des Classes
+            </h1>
+            <p class="text-muted">Gestion complète des classes de l'école</p>
+        </div>
+        <div class="col-md-4 d-flex justify-content-end gap-2">
+            <a href="{% url 'academics:class_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Nouvelle Classe
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-left-primary">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Total Classes</h6>
+                    <h2 class="mb-0" style="color: #667eea;">{{ total_classes }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-left-success">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Total Élèves</h6>
+                    <h2 class="mb-0" style="color: #28a745;">{{ total_students }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Rechercher une classe..."
+                        value="{{ search_query }}"
+                    >
+                </div>
+                <div class="col-md-4">
+                    <select name="level" class="form-select">
+                        <option value="">Tous les niveaux</option>
+                        {% for level_code, level_name in levels %}
+                            <option value="{{ level_code }}" {% if level_filter == level_code %}selected{% endif %}>
+                                {{ level_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Classes List -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <tr>
+                        <th>Classe</th>
+                        <th>Niveau</th>
+                        <th>Capacité</th>
+                        <th>Élèves</th>
+                        <th>Professeur</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if classes %}
+                        {% for class in classes %}
+                            <tr>
+                                <td>
+                                    <strong style="color: #667eea;">{{ class.name }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background-color: #764ba2;">
+                                        Niveau {{ class.level }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if class.is_full %}
+                                        <span class="badge bg-danger">Complet</span>
+                                    {% else %}
+                                        <span class="badge bg-success">{{ class.available_spots }} place(s)</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong>{{ class.student_count }}/{{ class.capacity }}</strong>
+                                </td>
+                                <td>{{ class.teacher|default:'-' }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a
+                                            href="{% url 'academics:class_detail' class.id %}"
+                                            class="btn btn-info"
+                                            title="Voir"
+                                        >
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a
+                                            href="{% url 'academics:class_update' class.id %}"
+                                            class="btn btn-warning"
+                                            title="Modifier"
+                                        >
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a
+                                            href="{% url 'academics:class_delete' class.id %}"
+                                            class="btn btn-danger"
+                                            title="Supprimer"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <p class="text-muted mb-0">Aucune classe trouvée</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-left-primary {
+        border-left: 4px solid #667eea !important;
+    }
+    .border-left-success {
+        border-left: 4px solid #28a745 !important;
+    }
+</style>
+{% endblock %}

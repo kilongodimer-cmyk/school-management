@@ -1,0 +1,163 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}{% if action == 'Créer' %}Nouvelle Classe{% else %}Modifier Classe{% endif %} | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-plus-circle"></i> {{ action }} une Classe
+            </h1>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Informations de base -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #667eea;">
+                                <i class="bi bi-info-circle"></i> Informations de Base
+                            </legend>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.name.id_for_label }}" class="form-label">
+                                        {{ form.name.label }}
+                                    </label>
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.level.id_for_label }}" class="form-label">
+                                        {{ form.level.label }}
+                                    </label>
+                                    {{ form.level }}
+                                    {% if form.level.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.level.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.room.id_for_label }}" class="form-label">
+                                        {{ form.room.label }}
+                                    </label>
+                                    {{ form.room }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.capacity.id_for_label }}" class="form-label">
+                                        {{ form.capacity.label }}
+                                    </label>
+                                    {{ form.capacity }}
+                                    {% if form.capacity.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.capacity.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Académique -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #764ba2;">
+                                <i class="bi bi-book"></i> Informations Académiques
+                            </legend>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.academic_year.id_for_label }}" class="form-label">
+                                        {{ form.academic_year.label }}
+                                    </label>
+                                    {{ form.academic_year }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.teacher.id_for_label }}" class="form-label">
+                                        {{ form.teacher.label }}
+                                    </label>
+                                    {{ form.teacher }}
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Description -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #f093fb;">
+                                <i class="bi bi-card-text"></i> Description
+                            </legend>
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">
+                                    {{ form.description.label }}
+                                </label>
+                                {{ form.description }}
+                            </div>
+                        </fieldset>
+
+                        <!-- Non-field errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Erreur:</strong>
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 justify-content-between">
+                            <a href="{% url 'academics:class_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> {{ action }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Sidebar -->
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-lightbulb"></i> Aide
+                    </h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <strong>Nom:</strong> Le nom unique de la classe (ex: 6ème A)
+                        </li>
+                        <li class="mb-2">
+                            <strong>Niveau:</strong> Le niveau académique (1 à 12)
+                        </li>
+                        <li class="mb-2">
+                            <strong>Capacité:</strong> Nombre maximum d'élèves
+                        </li>
+                        <li class="mb-2">
+                            <strong>Année Académique:</strong> L'année scolaire de cette classe
+                        </li>
+                        <li class="mb-2">
+                            <strong>Professeur Principal:</strong> Responsable de la classe
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+[Unit]
+Description=School Management Django Application with Gunicorn
+After=network.target postgresql.service redis.service
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/school_management
+
+# Environment
+Environment="PATH=/var/www/school_management/venv/bin"
+Environment="DJANGO_SETTINGS_MODULE=school_management.settings_prod"
+EnvironmentFile=/var/www/school_management/.env
+
+# Execution
+ExecStartPre=/var/www/school_management/venv/bin/python manage.py migrate
+ExecStartPre=/var/www/school_management/venv/bin/python manage.py collectstatic --noinput
+ExecStart=/var/www/school_management/venv/bin/gunicorn \
+    --workers 4 \
+    --worker-class sync \
+    --worker-tmp-dir /dev/shm \
+    --bind unix:/run/school-management.sock \
+    --timeout 120 \
+    --error-logfile /var/log/school-management/error.log \
+    --access-logfile /var/log/school-management/access.log \
+    school_management.wsgi:application
+
+# Restart policy
+Restart=always
+RestartSec=10
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Resource limits
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

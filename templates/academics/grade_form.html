@@ -1,0 +1,159 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}{% if action == 'Créer' %}Ajouter une Note{% else %}Modifier la Note{% endif %} | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-file-earmark-text"></i> {{ action }} une Note
+            </h1>
+        </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Élève et Matière -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #667eea;">
+                                <i class="bi bi-person-fill"></i> Élève et Matière
+                            </legend>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.student.id_for_label }}" class="form-label">
+                                        {{ form.student.label }}
+                                    </label>
+                                    {{ form.student }}
+                                    {% if form.student.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.student.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.subject.id_for_label }}" class="form-label">
+                                        {{ form.subject.label }}
+                                    </label>
+                                    {{ form.subject }}
+                                    {% if form.subject.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.subject.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Trimestre et Note -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #764ba2;">
+                                <i class="bi bi-calendar"></i> Trimestre et Note
+                            </legend>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.term.id_for_label }}" class="form-label">
+                                        {{ form.term.label }}
+                                    </label>
+                                    {{ form.term }}
+                                    {% if form.term.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.term.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.score.id_for_label }}" class="form-label">
+                                        {{ form.score.label }}
+                                    </label>
+                                    <div class="input-group">
+                                        {{ form.score }}
+                                        <span class="input-group-text">/20</span>
+                                    </div>
+                                    {% if form.score.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.score.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Commentaires -->
+                        <fieldset class="mb-4">
+                            <legend class="mb-3" style="color: #f093fb;">
+                                <i class="bi bi-chat-dots"></i> Commentaires
+                            </legend>
+                            <div class="mb-3">
+                                <label for="{{ form.comments.id_for_label }}" class="form-label">
+                                    {{ form.comments.label }}
+                                </label>
+                                {{ form.comments }}
+                            </div>
+                        </fieldset>
+
+                        <!-- Non-field errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Erreur:</strong>
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 justify-content-between">
+                            <a href="{% url 'academics:grade_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> {{ action }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Sidebar -->
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-info-circle"></i> Échelle de Notation
+                    </h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <strong>18-20:</strong> <span class="badge bg-success">Excellent</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>16-17:</strong> <span class="badge bg-success">Très Bien</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>14-15:</strong> <span class="badge bg-info">Bien</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>12-13:</strong> <span class="badge bg-info">Assez Bien</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>10-11:</strong> <span class="badge bg-warning">Passable</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>0-9:</strong> <span class="badge bg-danger">Faible</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

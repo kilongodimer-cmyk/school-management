@@ -1,0 +1,124 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Notes des Élèves | Academics{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-file-earmark-text"></i> Gestion des Notes
+            </h1>
+            <p class="text-muted">Enregistrement et gestion des notes des élèves</p>
+        </div>
+        <div class="col-md-4 d-flex justify-content-end gap-2">
+            <a href="{% url 'academics:grade_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Nouvelle Note
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Chercher un élève..."
+                        value="{{ search_query }}"
+                    >
+                </div>
+                <div class="col-md-3">
+                    <select name="term" class="form-select">
+                        <option value="">Tous les trimestres</option>
+                        {% for term in terms %}
+                            <option value="{{ term.id }}" {% if term_filter == term.id %}selected{% endif %}>
+                                {{ term.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grades List -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <tr>
+                        <th>Élève</th>
+                        <th>Matière</th>
+                        <th>Trimestre</th>
+                        <th>Note</th>
+                        <th>Appréciation</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if grades %}
+                        {% for grade in grades %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'academics:student_results' grade.student.id %}" style="color: #667eea;">
+                                        <strong>{{ grade.student.full_name }}</strong>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background-color: #764ba2;">
+                                        {{ grade.subject.code }}
+                                    </span>
+                                </td>
+                                <td>{{ grade.term.name }}</td>
+                                <td>
+                                    <strong style="font-size: 18px;">{{ grade.score }}/20</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ grade.status_badge }}">
+                                        {{ grade.rating }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a
+                                            href="{% url 'academics:grade_update' grade.id %}"
+                                            class="btn btn-warning"
+                                            title="Modifier"
+                                        >
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a
+                                            href="{% url 'academics:grade_delete' grade.id %}"
+                                            class="btn btn-danger"
+                                            title="Supprimer"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <p class="text-muted mb-0">Aucune note trouvée</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

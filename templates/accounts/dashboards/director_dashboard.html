@@ -1,0 +1,164 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Dashboard Directeur - School Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-tachometer-alt"></i> Dashboard - {{ school.name }}
+        </h1>
+        <a href="{% url 'accounts:user_list' %}" class="btn btn-primary">
+            <i class="fas fa-users"></i> Gérer les utilisateurs
+        </a>
+    </div>
+    
+    <!-- Statistiques Principales -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-primary">
+                <div class="stat-value">{{ total_users }}</div>
+                <div class="stat-label">Total Utilisateurs</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-success">
+                <div class="stat-value">{{ total_teachers }}</div>
+                <div class="stat-label">Enseignants</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-warning">
+                <div class="stat-value">{{ total_students }}</div>
+                <div class="stat-label">Étudiants</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card stat-danger">
+                <div class="stat-value">{{ total_parents }}</div>
+                <div class="stat-label">Parents</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Informations de l'école -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-school"></i> Informations de l'École
+                </div>
+                <div class="card-body">
+                    <p><strong>Nom :</strong> {{ school.name }}</p>
+                    <p><strong>Code :</strong> <span class="badge bg-info">{{ school.code }}</span></p>
+                    <p><strong>Email :</strong> {{ school.email }}</p>
+                    <p><strong>Téléphone :</strong> {{ school.phone|default:"-" }}</p>
+                    <p><strong>Localisation :</strong> {{ school.city|default:"-" }}, {{ school.country|default:"-" }}</p>
+                    <p><strong>Directeur :</strong> {{ school.director_name|default:"-" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i> Capacité
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">
+                        <strong>Étudiants : </strong>{{ total_students }} / {{ school.max_students }}
+                    </p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar" style="width: {{ total_students|add:'0'|mul:100|div:school.max_students }}%">
+                            {{ total_students|add:'0'|mul:100|div:school.max_students|floatformat:0 }}%
+                        </div>
+                    </div>
+                    
+                    <p class="mb-3">
+                        <strong>Enseignants : </strong>{{ total_teachers }} / {{ school.max_teachers }}
+                    </p>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: {{ total_teachers|add:'0'|mul:100|div:school.max_teachers }}%">
+                            {{ total_teachers|add:'0'|mul:100|div:school.max_teachers|floatformat:0 }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Enseignants Récents -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chalkboard-user"></i> Enseignants
+                </div>
+                <div class="card-body">
+                    {% if teachers %}
+                        <div class="list-group">
+                            {% for teacher in teachers %}
+                                <a href="{% url 'accounts:user_detail' teacher.id %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <strong>{{ teacher.get_full_name|default:teacher.username }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ teacher.email }}</small>
+                                        </span>
+                                        {% if teacher.is_verified %}
+                                            <span class="badge bg-success">Vérifié</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Non vérifié</span>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucun enseignant enregistré</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Utilisateurs Récents -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user-clock"></i> Utilisateurs Récents
+                </div>
+                <div class="card-body">
+                    {% if recent_users %}
+                        <div class="list-group">
+                            {% for user in recent_users %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                            <br>
+                                            <small>
+                                                {% if user.role == 'teacher' %}
+                                                    <span class="badge badge-role badge-teacher">Enseignant</span>
+                                                {% elif user.role == 'student' %}
+                                                    <span class="badge badge-role badge-student">Étudiant</span>
+                                                {% elif user.role == 'parent' %}
+                                                    <span class="badge badge-role badge-parent">Parent</span>
+                                                {% elif user.role == 'accountant' %}
+                                                    <span class="badge badge-role badge-accountant">Comptable</span>
+                                                {% endif %}
+                                            </small>
+                                        </span>
+                                        <small class="text-muted">{{ user.created_at|date:"d/m/Y" }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucun utilisateur</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

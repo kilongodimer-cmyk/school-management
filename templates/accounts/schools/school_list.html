@@ -1,0 +1,155 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Gestion des Écoles - School Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-school"></i> Gestion des Écoles
+        </h1>
+        <a href="#" class="btn btn-success">
+            <i class="fas fa-plus"></i> Ajouter une école
+        </a>
+    </div>
+    
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label for="search_filter" class="form-label">Rechercher</label>
+                    <input type="text" class="form-control" id="search_filter" name="search" 
+                           placeholder="Nom ou code d'école..." value="{{ request.GET.search|default:'' }}">
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="status_filter" class="form-label">Filtrer par statut</label>
+                    <select class="form-select" id="status_filter" name="status">
+                        <option value="">Tous les statuts</option>
+                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Actives</option>
+                        <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactives</option>
+                    </select>
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Statistiques globales -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="card-title">{{ total_schools }}</h4>
+                    <p class="text-muted mb-0">Écoles totales</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="card-title">{{ active_schools }}</h4>
+                    <p class="text-muted mb-0">Écoles actives</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="card-title">{{ total_users }}</h4>
+                    <p class="text-muted mb-0">Utilisateurs totaux</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 class="card-title">{{ total_capacity }}</h4>
+                    <p class="text-muted mb-0">Capacité totale</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Liste des écoles -->
+    <div class="card">
+        <div class="card-body">
+            {% if schools %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Code</th>
+                                <th>Localisation</th>
+                                <th>Directeur</th>
+                                <th>Utilisateurs</th>
+                                <th>Capacité</th>
+                                <th>Statut</th>
+                                <th>Création</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for school in schools %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ school.name }}</strong>
+                                    </td>
+                                    <td>
+                                        <code>{{ school.code }}</code>
+                                    </td>
+                                    <td>
+                                        <small>{{ school.city }}, {{ school.country }}</small>
+                                    </td>
+                                    <td>
+                                        {{ school.director_name|default:"N/A" }}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">
+                                            {{ school.user_count|default:0 }} utilisateurs
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            {{ school.current_students|default:0 }}/{{ school.max_students }} étudiants
+                                        </span>
+                                        <span class="badge bg-secondary">
+                                            {{ school.current_teachers|default:0 }}/{{ school.max_teachers }} enseignants
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if school.is_active %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ school.created_at|date:"d/m/Y" }}</small>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'accounts:school_detail' school.id %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> Voir
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Aucune école trouvée
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

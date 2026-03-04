@@ -1,0 +1,87 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Dashboard Enseignant - School Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">
+        <i class="fas fa-chalkboard-user"></i> Dashboard Enseignant
+    </h1>
+    
+    <!-- Statistiques Principales -->
+    <div class="row mb-4">
+        <div class="col-md-4 col-sm-6">
+            <div class="stat-card stat-primary">
+                <div class="stat-value">{{ total_students }}</div>
+                <div class="stat-label">Étudiants</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="stat-card stat-success">
+                <div class="stat-value">{{ total_classes }}</div>
+                <div class="stat-label">Mes Cours</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="stat-card stat-warning">
+                <div class="stat-value">{{ pending_grades }}</div>
+                <div class="stat-label">Notes à Saisir</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Informations Enseignant -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user"></i> Mes Informations
+                </div>
+                <div class="card-body">
+                    <p><strong>Nom :</strong> {{ teacher.get_full_name }}</p>
+                    <p><strong>Email :</strong> {{ teacher.email }}</p>
+                    <p><strong>Téléphone :</strong> {{ teacher.phone|default:"-" }}</p>
+                    <p><strong>École :</strong> {{ school.name }}</p>
+                    <p><strong>Bio :</strong> {{ teacher.bio|default:"-" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-graduation-cap"></i> École
+                </div>
+                <div class="card-body">
+                    <p><strong>{{ school.name }}</strong></p>
+                    <p><small class="text-muted">{{ school.code }}</small></p>
+                    <p><small class="text-muted">{{ school.city }}, {{ school.country }}</small></p>
+                    <hr>
+                    <p class="mb-0">
+                        <strong>Directeur :</strong> {{ school.director_name }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Actions rapides -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-tasks"></i> Actions Rapides
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-edit"></i> Modifier Mon Profil
+                    </a>
+                    <a href="{% url 'accounts:change_password' %}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-key"></i> Changer Mon Mot de Passe
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
