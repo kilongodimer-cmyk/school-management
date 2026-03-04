@@ -5,4 +5,6 @@ dj-database-url
 psycopg2-binary
 python-dotenv
 reportlab
+python-decouple
 
+python-decouple
