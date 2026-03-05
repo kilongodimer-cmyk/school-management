@@ -87,7 +87,6 @@ class StudentAdmin(admin.ModelAdmin):
         }),
         ('Informations académiques', {
             'fields': (
-                'enrollment_date',
                 'gpa',
                 'status',
             )
