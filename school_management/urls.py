@@ -13,6 +13,9 @@ urlpatterns = [
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
     path('students/', include('apps.students.urls', namespace='students')),
     path('academics/', include('apps.academics.urls', namespace='academics')),
+    path('ui/notes/', TemplateView.as_view(template_name='ui/notes.html'), name='ui_notes'),
+    path('ui/bulletins/', TemplateView.as_view(template_name='ui/bulletins.html'), name='ui_bulletins'),
+    path('ui/finance/', TemplateView.as_view(template_name='ui/finance.html'), name='ui_finance'),
 ]
 
 # Serve media files in development
