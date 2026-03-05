@@ -3,18 +3,18 @@
 {% block title %}Gestion des notes{% endblock %}
 
 {% block content %}
-<div class="sm-dashboard">
+<div class="sm-page sm-reveal">
   <div class="sm-page-header">
     <div>
       <h1>Gestion des notes</h1>
       <p class="sm-text-muted">Saisie rapide et calcul automatique des moyennes.</p>
     </div>
-    <button class="btn sm-btn-primary">Enregistrer les notes</button>
+    <button class="sm-btn-primary">Enregistrer les notes</button>
   </div>
 
-  <div class="sm-panel">
-    <div class="row g-3">
-      <div class="col-md-4">
+  <div class="sm-panel sm-filter-panel">
+    <div class="sm-filter-grid">
+      <div class="sm-field">
         <label class="sm-label">Classe</label>
         <select class="form-select sm-input">
           <option>2nde A</option>
@@ -22,7 +22,7 @@
           <option>Tle C</option>
         </select>
       </div>
-      <div class="col-md-4">
+      <div class="sm-field">
         <label class="sm-label">Matiere</label>
         <select class="form-select sm-input">
           <option>Math</option>
@@ -30,7 +30,7 @@
           <option>Anglais</option>
         </select>
       </div>
-      <div class="col-md-4">
+      <div class="sm-field">
         <label class="sm-label">Trimestre</label>
         <select class="form-select sm-input">
           <option>Trimestre 1</option>
@@ -60,7 +60,7 @@
             <td><input class="form-control sm-input" value="14"></td>
             <td><input class="form-control sm-input" value="12"></td>
             <td><input class="form-control sm-input" value="15"></td>
-            <td><span class="sm-badge success">14.3</span></td>
+            <td><span class="sm-pill sm-pill-success">14.3</span></td>
           </tr>
           <tr>
             <td>Daniel Mbuyi</td>
@@ -68,7 +68,7 @@
             <td><input class="form-control sm-input" value="11"></td>
             <td><input class="form-control sm-input" value="10"></td>
             <td><input class="form-control sm-input" value="8"></td>
-            <td><span class="sm-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">9.5</span></td>
+            <td><span class="sm-pill sm-pill-warning">9.5</span></td>
           </tr>
           <tr>
             <td>Sarah Ndzi</td>
@@ -76,7 +76,7 @@
             <td><input class="form-control sm-input" value="7"></td>
             <td><input class="form-control sm-input" value="8"></td>
             <td><input class="form-control sm-input" value="6"></td>
-            <td><span class="sm-badge" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">6.8</span></td>
+            <td><span class="sm-pill sm-pill-danger">6.8</span></td>
           </tr>
         </tbody>
       </table>

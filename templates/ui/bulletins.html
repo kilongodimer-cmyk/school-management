@@ -3,25 +3,25 @@
 {% block title %}Bulletins PDF{% endblock %}
 
 {% block content %}
-<div class="sm-dashboard">
+<div class="sm-page sm-reveal">
   <div class="sm-page-header">
     <div>
       <h1>Bulletins scolaires</h1>
       <p class="sm-text-muted">Generation rapide des bulletins PDF officiels.</p>
     </div>
-    <button class="btn sm-btn-primary">Generer les bulletins</button>
+    <button class="sm-btn-primary">Generer les bulletins</button>
   </div>
 
-  <div class="sm-panel">
-    <div class="row g-3">
-      <div class="col-md-6">
+  <div class="sm-panel sm-filter-panel">
+    <div class="sm-filter-grid">
+      <div class="sm-field">
         <label class="sm-label">Classe</label>
         <select class="form-select sm-input">
           <option>2nde A</option>
           <option>1ere B</option>
         </select>
       </div>
-      <div class="col-md-6">
+      <div class="sm-field">
         <label class="sm-label">Trimestre</label>
         <select class="form-select sm-input">
           <option>Trimestre 1</option>
@@ -48,15 +48,15 @@
             <td>Marie Kabeya</td>
             <td>2nde A</td>
             <td>14.3</td>
-            <td><span class="sm-badge success">Admis</span></td>
-            <td><button class="btn sm-btn-outline">Telecharger</button></td>
+            <td><span class="sm-pill sm-pill-success">Admis</span></td>
+            <td><button class="sm-btn-outline">Telecharger</button></td>
           </tr>
           <tr>
             <td>Daniel Mbuyi</td>
             <td>2nde A</td>
             <td>9.5</td>
-            <td><span class="sm-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">Redouble</span></td>
-            <td><button class="btn sm-btn-outline">Telecharger</button></td>
+            <td><span class="sm-pill sm-pill-warning">Redouble</span></td>
+            <td><button class="sm-btn-outline">Telecharger</button></td>
           </tr>
         </tbody>
       </table>
@@ -64,7 +64,10 @@
   </div>
 
   <div class="sm-panel">
-    <h3>Design officiel du bulletin</h3>
+    <div class="sm-panel-header">
+      <h3>Design officiel du bulletin</h3>
+      <span class="sm-chip">Apercu</span>
+    </div>
     <div class="sm-chart">Apercu PDF: logo, nom, classe, tableau notes, mention, signature.</div>
   </div>
 </div>

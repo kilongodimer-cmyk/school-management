@@ -3,15 +3,15 @@
 {% block title %}Gestion financiere{% endblock %}
 
 {% block content %}
-<div class="sm-dashboard">
+<div class="sm-page sm-reveal">
   <div class="sm-page-header">
     <div>
       <h1>Gestion financiere</h1>
       <p class="sm-text-muted">Suivi des paiements et relances.</p>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn sm-btn-outline">Exporter Excel</button>
-      <button class="btn sm-btn-primary">Enregistrer paiement</button>
+    <div class="sm-actions">
+      <button class="sm-btn-outline">Exporter Excel</button>
+      <button class="sm-btn-primary">Enregistrer paiement</button>
     </div>
   </div>
 
@@ -58,21 +58,21 @@
             <td>1ere B</td>
             <td>$ 180</td>
             <td>03/03/2026</td>
-            <td><span class="sm-badge success">Paye</span></td>
+            <td><span class="sm-pill sm-pill-success">Paye</span></td>
           </tr>
           <tr>
             <td>Daniel Mbuyi</td>
             <td>2nde A</td>
             <td>$ 120</td>
             <td>02/03/2026</td>
-            <td><span class="sm-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">En attente</span></td>
+            <td><span class="sm-pill sm-pill-warning">En attente</span></td>
           </tr>
           <tr>
             <td>Luc Tuma</td>
             <td>Tle C</td>
             <td>$ 200</td>
             <td>01/03/2026</td>
-            <td><span class="sm-badge" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">Retard</span></td>
+            <td><span class="sm-pill sm-pill-danger">Retard</span></td>
           </tr>
         </tbody>
       </table>

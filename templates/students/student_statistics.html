@@ -1,197 +1,89 @@
 {% extends "accounts/base.html" %}
 
-{% block title %}Statistiques des Élèves - School Management{% endblock %}
+{% block title %}Statistiques des eleves - School Management{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- En-tête -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>
-            <i class="fas fa-chart-bar"></i> Statistiques des Élèves
-        </h1>
+<div class="sm-page sm-reveal">
+    <div class="sm-page-header">
         <div>
-            <a href="{% url 'students:student_list' %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Retour à la liste
-            </a>
+            <h1>Statistiques eleves</h1>
+            <p class="sm-text-muted">Vue globale des effectifs et performances.</p>
+        </div>
+        <a href="{% url 'students:student_list' %}" class="sm-btn-outline">Retour</a>
+    </div>
+
+    <div class="sm-stat-grid">
+        <div class="sm-stat-card">
+            <div class="sm-stat-title">Eleves totaux</div>
+            <div class="sm-stat-value">{{ total_students }}</div>
+        </div>
+        <div class="sm-stat-card">
+            <div class="sm-stat-title">Actifs</div>
+            <div class="sm-stat-value">{{ active_students }}</div>
+        </div>
+        <div class="sm-stat-card">
+            <div class="sm-stat-title">Diplomes</div>
+            <div class="sm-stat-value">{{ graduated_students }}</div>
+        </div>
+        <div class="sm-stat-card">
+            <div class="sm-stat-title">Suspendus</div>
+            <div class="sm-stat-value">{{ suspended_students }}</div>
         </div>
     </div>
-    
-    <!-- Statistiques principales -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="card-title text-primary">{{ total_students }}</h3>
-                    <p class="text-muted mb-0">
-                        <i class="fas fa-graduation-cap"></i> Élèves totaux
-                    </p>
+
+    <div class="sm-grid-two">
+        <div class="sm-panel">
+            <div class="sm-panel-header">
+                <h3>Repartition par statut</h3>
+                <span class="sm-chip">Effectifs</span>
+            </div>
+            <div class="sm-info-grid">
+                <div class="sm-info-item">
+                    <span class="sm-info-label">Actifs</span>
+                    <strong>{{ active_students }}</strong>
+                </div>
+                <div class="sm-info-item">
+                    <span class="sm-info-label">Inactifs</span>
+                    <strong>{{ inactive_students }}</strong>
+                </div>
+                <div class="sm-info-item">
+                    <span class="sm-info-label">Diplomes</span>
+                    <strong>{{ graduated_students }}</strong>
+                </div>
+                <div class="sm-info-item">
+                    <span class="sm-info-label">Suspendus</span>
+                    <strong>{{ suspended_students }}</strong>
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="card-title text-success">{{ active_students }}</h3>
-                    <p class="text-muted mb-0">
-                        <i class="fas fa-check-circle"></i> Élèves actifs
-                    </p>
-                </div>
+        <div class="sm-panel">
+            <div class="sm-panel-header">
+                <h3>Moyenne generale</h3>
+                <span class="sm-chip">Performance</span>
             </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="card-title text-info">{{ graduated_students }}</h3>
-                    <p class="text-muted mb-0">
-                        <i class="fas fa-award"></i> Diplômés
-                    </p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="card-title text-danger">{{ suspended_students }}</h3>
-                    <p class="text-muted mb-0">
-                        <i class="fas fa-ban"></i> Suspendus
-                    </p>
-                </div>
-            </div>
+            {% if avg_gpa %}
+                <div class="sm-stat-value" style="font-size: 36px;">{{ avg_gpa|floatformat:2 }}/20</div>
+                <div class="sm-text-muted">Moyenne de l ensemble de l ecole</div>
+            {% else %}
+                <div class="sm-text-muted">Aucune donnee de moyenne disponible</div>
+            {% endif %}
         </div>
     </div>
-    
-    <!-- Statistiques de statut -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-pie-chart"></i> Répartition par statut
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>
-                                <span class="badge bg-success">Actifs</span>
-                            </span>
-                            <strong>{{ active_students }}</strong>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-success" style="width: {% widthratio active_students total_students 100 %}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>
-                                <span class="badge bg-secondary">Inactifs</span>
-                            </span>
-                            <strong>{{ inactive_students }}</strong>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-secondary" style="width: {% widthratio inactive_students total_students 100 %}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>
-                                <span class="badge bg-info">Diplômés</span>
-                            </span>
-                            <strong>{{ graduated_students }}</strong>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-info" style="width: {% widthratio graduated_students total_students 100 %}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-0">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>
-                                <span class="badge bg-danger">Suspendus</span>
-                            </span>
-                            <strong>{{ suspended_students }}</strong>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-danger" style="width: {% widthratio suspended_students total_students 100 %}%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chart-line"></i> Moyennes
-                    </h5>
-                </div>
-                <div class="card-body">
-                    {% if avg_gpa %}
-                        <div class="text-center mb-3">
-                            <h4>Moyenne générale</h4>
-                            {% if avg_gpa >= 16 %}
-                                <h2 class="text-success">{{ avg_gpa|floatformat:2 }}/20</h2>
-                            {% elif avg_gpa >= 12 %}
-                                <h2 class="text-info">{{ avg_gpa|floatformat:2 }}/20</h2>
-                            {% elif avg_gpa >= 10 %}
-                                <h2 class="text-warning">{{ avg_gpa|floatformat:2 }}/20</h2>
-                            {% else %}
-                                <h2 class="text-danger">{{ avg_gpa|floatformat:2 }}/20</h2>
-                            {% endif %}
-                        </div>
-                        
-                        <hr>
-                        
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            La moyenne générale de l'école est <strong>{{ avg_gpa|floatformat:2 }}/20</strong>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            Aucune donnée de moyenne disponible
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Répartition par classe -->
+
     {% if grade_stats %}
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-book"></i> Répartition par classe
-                </h5>
+        <div class="sm-panel">
+            <div class="sm-panel-header">
+                <h3>Repartition par classe</h3>
+                <span class="sm-chip">Effectifs</span>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    {% for grade_stat in grade_stats %}
-                        <div class="col-md-6 mb-3">
-                            <dt>{{ grade_stat.grade }}</dt>
-                            <dd class="mb-2">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span>{{ grade_stat.count }} élève(s)</span>
-                                    <strong>
-                                        {% widthratio grade_stat.count total_students 100 %}%
-                                    </strong>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" 
-                                         style="width: {% widthratio grade_stat.count total_students 100 %}%">
-                                    </div>
-                                </div>
-                            </dd>
-                        </div>
-                    {% endfor %}
-                </div>
+            <div class="sm-info-grid">
+                {% for grade_stat in grade_stats %}
+                    <div class="sm-info-item">
+                        <span class="sm-info-label">{{ grade_stat.grade }}</span>
+                        <strong>{{ grade_stat.count }} eleve(s)</strong>
+                        <span class="sm-text-muted">{% widthratio grade_stat.count total_students 100 %}%</span>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     {% endif %}

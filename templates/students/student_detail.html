@@ -3,270 +3,110 @@
 {% block title %}{{ student.full_name }} - School Management{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- En-tête -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>
-            <i class="fas fa-user-graduate"></i> {{ student.full_name }}
-        </h1>
+<div class="sm-page sm-reveal">
+    <div class="sm-page-header">
         <div>
-            <a href="{% url 'students:student_list' %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Retour
-            </a>
-            <a href="{% url 'students:student_edit' student.id %}" class="btn btn-warning">
-                <i class="fas fa-edit"></i> Modifier
-            </a>
-            <a href="{% url 'students:student_delete' student.id %}" class="btn btn-danger">
-                <i class="fas fa-trash"></i> Supprimer
-            </a>
+            <h1>{{ student.full_name }}</h1>
+            <p class="sm-text-muted">Profil eleve et informations academiques.</p>
+        </div>
+        <div class="sm-actions">
+            <a href="{% url 'students:student_list' %}" class="sm-btn-outline">Retour</a>
+            <a href="{% url 'students:student_edit' student.id %}" class="sm-btn-outline">Modifier</a>
+            <a href="{% url 'students:student_delete' student.id %}" class="sm-btn-outline">Supprimer</a>
         </div>
     </div>
-    
-    <!-- Profil principal -->
-    <div class="row mb-4">
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    {% if student.photo %}
-                        <img src="{{ student.photo.url }}" alt="{{ student.full_name }}" 
-                             class="rounded-circle mb-3" width="150" height="150" style="object-fit: cover;">
-                    {% else %}
-                        <div class="bg-light rounded-circle mx-auto mb-3 d-inline-flex align-items-center justify-content-center" 
-                             style="width: 150px; height: 150px;">
-                            <i class="fas fa-user-graduate fa-3x text-muted"></i>
-                        </div>
-                    {% endif %}
-                    
-                    <h3>{{ student.full_name }}</h3>
-                    <p class="text-muted">
-                        <code>{{ student.student_id }}</code>
-                    </p>
-                    
-                    <!-- Badges -->
-                    <div class="mb-3">
-                        <span class="badge bg-info">
-                            <i class="fas fa-book"></i> {{ student.grade }}
-                        </span>
-                        {% if student.status == 'active' %}
-                            <span class="badge bg-success">Actif</span>
-                        {% elif student.status == 'inactive' %}
-                            <span class="badge bg-secondary">Inactif</span>
-                        {% elif student.status == 'graduated' %}
-                            <span class="badge bg-primary">Diplômé</span>
-                        {% elif student.status == 'suspended' %}
-                            <span class="badge bg-danger">Suspendu</span>
-                        {% endif %}
-                    </div>
-                    
-                    <hr>
-                    
-                    <!-- Infos rapides -->
-                    <div class="text-start">
-                        <p class="mb-2">
-                            <strong><i class="fas fa-birthday-cake"></i> Âge:</strong> {{ age }} ans
-                        </p>
-                        <p class="mb-2">
-                            <strong><i class="fas fa-venus-mars"></i> Genre:</strong>
-                            {% if student.gender == 'M' %}Masculin
-                            {% elif student.gender == 'F' %}Féminin
-                            {% else %}Autre{% endif %}
-                        </p>
+
+    <div class="sm-grid-two">
+        <div class="sm-panel" style="text-align: center;">
+            {% if student.photo %}
+                <img src="{{ student.photo.url }}" alt="{{ student.full_name }}" class="sm-avatar" style="width: 140px; height: 140px;">
+            {% else %}
+                <div class="sm-avatar" style="width: 140px; height: 140px; font-size: 36px;">
+                    {{ student.first_name|default:"E"|slice:":1" }}{{ student.last_name|default:""|slice:":1" }}
+                </div>
+            {% endif %}
+
+            <h3 style="margin-top: 16px;">{{ student.full_name }}</h3>
+            <div class="sm-text-muted">{{ student.student_id }}</div>
+
+            <div class="sm-actions" style="justify-content: center; margin-top: 16px;">
+                <span class="sm-pill sm-pill-info">{{ student.grade }}</span>
+                {% if student.status == 'active' %}
+                    <span class="sm-pill sm-pill-success">Actif</span>
+                {% elif student.status == 'inactive' %}
+                    <span class="sm-pill sm-pill-muted">Inactif</span>
+                {% elif student.status == 'graduated' %}
+                    <span class="sm-pill sm-pill-info">Diplome</span>
+                {% elif student.status == 'suspended' %}
+                    <span class="sm-pill sm-pill-danger">Suspendu</span>
+                {% endif %}
+            </div>
+
+            <div class="sm-info-grid" style="margin-top: 20px; text-align: left;">
+                <div class="sm-info-item">
+                    <span class="sm-info-label">Age</span>
+                    <strong>{{ age }} ans</strong>
+                </div>
+                <div class="sm-info-item">
+                    <span class="sm-info-label">Genre</span>
+                    <strong>{% if student.gender == 'M' %}Masculin{% elif student.gender == 'F' %}Feminin{% else %}Autre{% endif %}</strong>
+                </div>
+                <div class="sm-info-item">
+                    <span class="sm-info-label">Moyenne</span>
+                    <strong>
                         {% if student.gpa %}
-                            <p class="mb-2">
-                                <strong><i class="fas fa-chart-line"></i> Moyenne:</strong>
-                                {% if student.gpa >= 16 %}
-                                    <span class="badge bg-success">{{ student.gpa|floatformat:2 }}/20</span>
-                                {% elif student.gpa >= 12 %}
-                                    <span class="badge bg-info">{{ student.gpa|floatformat:2 }}/20</span>
-                                {% elif student.gpa >= 10 %}
-                                    <span class="badge bg-warning">{{ student.gpa|floatformat:2 }}/20</span>
-                                {% else %}
-                                    <span class="badge bg-danger">{{ student.gpa|floatformat:2 }}/20</span>
-                                {% endif %}
-                            </p>
+                            {{ student.gpa|floatformat:2 }}/20
+                        {% else %}
+                            N/A
                         {% endif %}
-                    </div>
+                    </strong>
                 </div>
             </div>
         </div>
-        
-        <!-- Informations détaillées -->
-        <div class="col-md-8">
-            <!-- Informations personnelles -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-id-card"></i> Informations personnelles
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Prénom</label>
-                            <strong>{{ student.first_name }}</strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Nom</label>
-                            <strong>{{ student.last_name }}</strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Email</label>
-                            <strong>
-                                {% if student.email %}
-                                    <a href="mailto:{{ student.email }}">{{ student.email }}</a>
-                                {% else %}
-                                    N/A
-                                {% endif %}
-                            </strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Téléphone</label>
-                            <strong>{{ student.phone|default:"N/A" }}</strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Date de naissance</label>
-                            <strong>{{ student.date_of_birth|date:"d/m/Y" }}</strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Genre</label>
-                            <strong>
-                                {% if student.gender == 'M' %}Masculin
-                                {% elif student.gender == 'F' %}Féminin
-                                {% else %}Autre{% endif %}
-                            </strong>
-                        </div>
-                    </div>
-                </div>
-            </card>
-            
-            <!-- Adresse -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-map-marker-alt"></i> Adresse
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label class="text-muted small d-block">Adresse</label>
-                            <strong>{{ student.address|default:"N/A" }}</strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Ville</label>
-                            <strong>{{ student.city|default:"N/A" }}</strong>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="text-muted small d-block">Code postal</label>
-                            <strong>{{ student.postal_code|default:"N/A" }}</strong>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="text-muted small d-block">Pays</label>
-                            <strong>{{ student.country|default:"N/A" }}</strong>
-                        </div>
-                    </div>
-                </div>
+
+        <div class="sm-panel">
+            <div class="sm-section-title">Informations personnelles</div>
+            <div class="sm-info-grid">
+                <div class="sm-info-item"><span class="sm-info-label">Prenom</span><strong>{{ student.first_name }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Nom</span><strong>{{ student.last_name }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Email</span><strong>{% if student.email %}<a href="mailto:{{ student.email }}">{{ student.email }}</a>{% else %}N/A{% endif %}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Telephone</span><strong>{{ student.phone|default:"N/A" }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Naissance</span><strong>{{ student.date_of_birth|date:"d/m/Y" }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Genre</span><strong>{% if student.gender == 'M' %}Masculin{% elif student.gender == 'F' %}Feminin{% else %}Autre{% endif %}</strong></div>
             </div>
-            
-            <!-- Contact parent -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-user-tie"></i> Contact parent/tuteur
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Nom</label>
-                            <strong>{{ student.parent_name|default:"N/A" }}</strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Téléphone</label>
-                            <strong>{{ student.parent_phone|default:"N/A" }}</strong>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="text-muted small d-block">Email</label>
-                            <strong>
-                                {% if student.parent_email %}
-                                    <a href="mailto:{{ student.parent_email }}">{{ student.parent_email }}</a>
-                                {% else %}
-                                    N/A
-                                {% endif %}
-                            </strong>
-                        </div>
-                    </div>
-                </div>
+
+            <div class="sm-section-title" style="margin-top: 20px;">Adresse</div>
+            <div class="sm-info-grid">
+                <div class="sm-info-item" style="grid-column: 1 / -1;"><span class="sm-info-label">Adresse</span><strong>{{ student.address|default:"N/A" }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Ville</span><strong>{{ student.city|default:"N/A" }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Code postal</span><strong>{{ student.postal_code|default:"N/A" }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Pays</span><strong>{{ student.country|default:"N/A" }}</strong></div>
             </div>
-            
-            <!-- Informations académiques -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-graduation-cap"></i> Informations académiques
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">École</label>
-                            <strong>{{ student.school.name }}</strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Classe</label>
-                            <strong>{{ student.grade }}</strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Moyenne générale</label>
-                            <strong>
-                                {% if student.gpa %}
-                                    {{ student.gpa|floatformat:2 }}/20
-                                {% else %}
-                                    N/A
-                                {% endif %}
-                            </strong>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small d-block">Date d'inscription</label>
-                            <strong>{{ student.enrollment_date|date:"d/m/Y" }}</strong>
-                        </div>
-                    </div>
-                </div>
+
+            <div class="sm-section-title" style="margin-top: 20px;">Contact parent</div>
+            <div class="sm-info-grid">
+                <div class="sm-info-item"><span class="sm-info-label">Nom</span><strong>{{ student.parent_name|default:"N/A" }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Telephone</span><strong>{{ student.parent_phone|default:"N/A" }}</strong></div>
+                <div class="sm-info-item" style="grid-column: 1 / -1;"><span class="sm-info-label">Email</span><strong>{% if student.parent_email %}<a href="mailto:{{ student.parent_email }}">{{ student.parent_email }}</a>{% else %}N/A{% endif %}</strong></div>
             </div>
-            
-            <!-- Dates -->
+
+            <div class="sm-section-title" style="margin-top: 20px;">Infos academiques</div>
+            <div class="sm-info-grid">
+                <div class="sm-info-item"><span class="sm-info-label">Ecole</span><strong>{{ student.school.name }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Classe</span><strong>{{ student.grade }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Moyenne</span><strong>{% if student.gpa %}{{ student.gpa|floatformat:2 }}/20{% else %}N/A{% endif %}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Inscription</span><strong>{{ student.enrollment_date|date:"d/m/Y" }}</strong></div>
+            </div>
+
             {% if student.notes %}
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-sticky-note"></i> Notes
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        {{ student.notes }}
-                    </div>
-                </div>
+                <div class="sm-section-title" style="margin-top: 20px;">Notes</div>
+                <div class="sm-text-muted">{{ student.notes }}</div>
             {% endif %}
-            
-            <!-- Horodatage -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-calendar"></i> Horodatage
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="text-muted small d-block">Créé le</label>
-                            <strong>{{ student.created_at|date:"d/m/Y à H:i" }}</strong>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="text-muted small d-block">Modifié le</label>
-                            <strong>{{ student.updated_at|date:"d/m/Y à H:i" }}</strong>
-                        </div>
-                    </div>
-                </div>
+
+            <div class="sm-section-title" style="margin-top: 20px;">Horodatage</div>
+            <div class="sm-info-grid">
+                <div class="sm-info-item"><span class="sm-info-label">Cree le</span><strong>{{ student.created_at|date:"d/m/Y H:i" }}</strong></div>
+                <div class="sm-info-item"><span class="sm-info-label">Modifie le</span><strong>{{ student.updated_at|date:"d/m/Y H:i" }}</strong></div>
             </div>
         </div>
     </div>

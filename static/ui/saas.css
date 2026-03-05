@@ -355,6 +355,145 @@ body {
   animation: sm-rise 0.9s ease both;
 }
 
+.sm-page {
+  display: grid;
+  gap: 20px;
+}
+
+.sm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sm-filter-panel {
+  padding: 18px 20px;
+}
+
+.sm-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  align-items: end;
+}
+
+.sm-field {
+  display: grid;
+  gap: 6px;
+}
+
+.sm-table {
+  background: #ffffff;
+  border-radius: var(--sm-radius);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  box-shadow: var(--sm-shadow);
+}
+
+.sm-table thead th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sm-muted);
+  background: #f4f6fa;
+}
+
+.sm-table tbody tr {
+  border-color: rgba(15, 23, 42, 0.06);
+}
+
+.sm-table td {
+  vertical-align: middle;
+}
+
+.sm-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sm-pill-info {
+  background: rgba(14, 165, 164, 0.12);
+  color: var(--sm-accent-ink);
+}
+
+.sm-pill-success {
+  background: rgba(16, 185, 129, 0.16);
+  color: var(--sm-success);
+}
+
+.sm-pill-warning {
+  background: rgba(245, 158, 11, 0.16);
+  color: var(--sm-warning);
+}
+
+.sm-pill-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--sm-error);
+}
+
+.sm-pill-muted {
+  background: rgba(100, 116, 139, 0.12);
+  color: var(--sm-muted);
+}
+
+.sm-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--sm-ink);
+}
+
+.sm-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.sm-info-item {
+  display: grid;
+  gap: 4px;
+}
+
+.sm-info-label {
+  color: var(--sm-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sm-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sm-muted);
+  margin-bottom: 10px;
+}
+
+.sm-pagination .page-link {
+  border: none;
+  background: transparent;
+  color: var(--sm-muted);
+  font-weight: 600;
+}
+
+.sm-pagination .page-item.active .page-link {
+  background: var(--sm-accent);
+  color: #ffffff;
+  border-radius: 999px;
+}
+
 @keyframes sm-rise {
   from {
     opacity: 0;

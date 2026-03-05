@@ -1,28 +1,27 @@
 {% extends "accounts/base.html" %}
 
-{% block title %}Gestion des Élèves - School Management{% endblock %}
+{% block title %}Gestion des eleves - School Management{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- En-tête -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>
-            <i class="fas fa-graduation-cap"></i> Gestion des Élèves
-        </h1>
+<div class="sm-page sm-reveal">
+    <div class="sm-page-header">
         <div>
-            <a href="{% url 'students:student_statistics' %}" class="btn btn-info">
-                <i class="fas fa-chart-bar"></i> Statistiques
+            <h1>Eleves</h1>
+            <p class="sm-text-muted">Gestion des dossiers, inscriptions et statut.</p>
+        </div>
+        <div class="sm-actions">
+            <a href="{% url 'students:student_statistics' %}" class="sm-btn-outline">
+                Statistiques
             </a>
-            <a href="{% url 'students:student_export' %}" class="btn btn-secondary">
-                <i class="fas fa-download"></i> Exporter CSV
+            <a href="{% url 'students:student_export' %}" class="sm-btn-outline">
+                Export CSV
             </a>
-            <a href="{% url 'students:student_create' %}" class="btn btn-success">
-                <i class="fas fa-plus"></i> Ajouter un élève
+            <a href="{% url 'students:student_create' %}" class="sm-btn-primary">
+                Ajouter un eleve
             </a>
         </div>
     </div>
-    
-    <!-- Messages -->
+
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -31,225 +30,169 @@
             </div>
         {% endfor %}
     {% endif %}
-    
-    <!-- Filtres et Recherche -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <form method="get" id="filter-form" class="row g-3">
-                <!-- Recherche -->
-                <div class="col-md-3">
-                    <label for="search" class="form-label">Rechercher</label>
-                    <input type="text" class="form-control" id="search" name="search" 
-                           placeholder="Nom ou numéro d'élève..." value="{{ search_query }}">
-                </div>
-                
-                <!-- Filtre par classe -->
-                <div class="col-md-3">
-                    <label for="grade" class="form-label">Classe</label>
-                    <input type="text" class="form-control" id="grade" name="grade" 
-                           placeholder="Ex: 6ème A..." value="{{ grade_filter }}">
-                </div>
-                
-                <!-- Filtre par statut -->
-                <div class="col-md-2">
-                    <label for="status" class="form-label">Statut</label>
-                    <select class="form-select" id="status" name="status">
-                        <option value="">Tous</option>
-                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Actif</option>
-                        <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactif</option>
-                        <option value="graduated" {% if request.GET.status == 'graduated' %}selected{% endif %}>Diplômé</option>
-                        <option value="suspended" {% if request.GET.status == 'suspended' %}selected{% endif %}>Suspendu</option>
-                    </select>
-                </div>
-                
-                <!-- Filtre par genre -->
-                <div class="col-md-2">
-                    <label for="gender" class="form-label">Genre</label>
-                    <select class="form-select" id="gender" name="gender">
-                        <option value="">Tous</option>
-                        <option value="M" {% if request.GET.gender == 'M' %}selected{% endif %}>Masculin</option>
-                        <option value="F" {% if request.GET.gender == 'F' %}selected{% endif %}>Féminin</option>
-                        <option value="O" {% if request.GET.gender == 'O' %}selected{% endif %}>Autre</option>
-                    </select>
-                </div>
-                
-                <!-- Tri -->
-                <div class="col-md-2">
-                    <label for="sort_by" class="form-label">Trier par</label>
-                    <select class="form-select" id="sort_by" name="sort_by">
-                        <option value="last_name" {% if request.GET.sort_by == 'last_name' or not request.GET.sort_by %}selected{% endif %}>Nom (A-Z)</option>
-                        <option value="-last_name" {% if request.GET.sort_by == '-last_name' %}selected{% endif %}>Nom (Z-A)</option>
-                        <option value="-gpa" {% if request.GET.sort_by == '-gpa' %}selected{% endif %}>Moyenne ↓</option>
-                        <option value="gpa" {% if request.GET.sort_by == 'gpa' %}selected{% endif %}>Moyenne ↑</option>
-                        <option value="-created_at" {% if request.GET.sort_by == '-created_at' %}selected{% endif %}>Récent</option>
-                    </select>
-                </div>
-                
-                <!-- Boutons -->
-                <div class="col-12">
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-search"></i> Filtrer
-                        </button>
-                        <a href="{% url 'students:student_list' %}" class="btn btn-outline-secondary">
-                            <i class="fas fa-redo"></i> Réinitialiser
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Statistiques rapides -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h4 class="card-title text-primary">{{ total_count }}</h4>
-                    <p class="text-muted mb-0">Élèves trouvés</p>
-                </div>
+
+    <div class="sm-panel sm-filter-panel">
+        <form method="get" id="filter-form" class="sm-filter-grid">
+            <div class="sm-field">
+                <label for="search" class="sm-label">Recherche</label>
+                <input type="text" class="form-control sm-input" id="search" name="search"
+                       placeholder="Nom ou numero..." value="{{ search_query }}">
             </div>
+            <div class="sm-field">
+                <label for="grade" class="sm-label">Classe</label>
+                <input type="text" class="form-control sm-input" id="grade" name="grade"
+                       placeholder="Ex: 6eme A" value="{{ grade_filter }}">
+            </div>
+            <div class="sm-field">
+                <label for="status" class="sm-label">Statut</label>
+                <select class="form-select sm-input" id="status" name="status">
+                    <option value="">Tous</option>
+                    <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Actif</option>
+                    <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactif</option>
+                    <option value="graduated" {% if request.GET.status == 'graduated' %}selected{% endif %}>Diplome</option>
+                    <option value="suspended" {% if request.GET.status == 'suspended' %}selected{% endif %}>Suspendu</option>
+                </select>
+            </div>
+            <div class="sm-field">
+                <label for="gender" class="sm-label">Genre</label>
+                <select class="form-select sm-input" id="gender" name="gender">
+                    <option value="">Tous</option>
+                    <option value="M" {% if request.GET.gender == 'M' %}selected{% endif %}>Masculin</option>
+                    <option value="F" {% if request.GET.gender == 'F' %}selected{% endif %}>Feminin</option>
+                    <option value="O" {% if request.GET.gender == 'O' %}selected{% endif %}>Autre</option>
+                </select>
+            </div>
+            <div class="sm-field">
+                <label for="sort_by" class="sm-label">Trier par</label>
+                <select class="form-select sm-input" id="sort_by" name="sort_by">
+                    <option value="last_name" {% if request.GET.sort_by == 'last_name' or not request.GET.sort_by %}selected{% endif %}>Nom (A-Z)</option>
+                    <option value="-last_name" {% if request.GET.sort_by == '-last_name' %}selected{% endif %}>Nom (Z-A)</option>
+                    <option value="-gpa" {% if request.GET.sort_by == '-gpa' %}selected{% endif %}>Moyenne desc</option>
+                    <option value="gpa" {% if request.GET.sort_by == 'gpa' %}selected{% endif %}>Moyenne asc</option>
+                    <option value="-created_at" {% if request.GET.sort_by == '-created_at' %}selected{% endif %}>Recent</option>
+                </select>
+            </div>
+            <div class="sm-field sm-actions">
+                <button type="submit" class="sm-btn-primary">Filtrer</button>
+                <a href="{% url 'students:student_list' %}" class="sm-btn-outline">Reinitialiser</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="sm-stat-grid">
+        <div class="sm-stat-card">
+            <div class="sm-stat-title">Eleves trouves</div>
+            <div class="sm-stat-value">{{ total_count }}</div>
+            <div class="sm-stat-meta">Resultats apres filtre</div>
         </div>
     </div>
-    
-    <!-- Tableau des élèves -->
-    <div class="card">
-        <div class="card-body">
-            {% if students %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+
+    <div class="sm-panel">
+        {% if students %}
+            <div class="table-responsive">
+                <table class="table sm-table">
+                    <thead>
+                        <tr>
+                            <th>Numero</th>
+                            <th>Eleve</th>
+                            <th>Classe</th>
+                            <th>Genre</th>
+                            <th>Moyenne</th>
+                            <th>Parent</th>
+                            <th>Statut</th>
+                            <th>Inscription</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
                             <tr>
-                                <th>Numéro</th>
-                                <th>Nom</th>
-                                <th>Classe</th>
-                                <th>Genre</th>
-                                <th>Moyenne</th>
-                                <th>Parent</th>
-                                <th>Statut</th>
-                                <th>Inscription</th>
-                                <th>Action</th>
+                                <td><span class="sm-pill sm-pill-muted">{{ student.student_id }}</span></td>
+                                <td>
+                                    <strong>{{ student.full_name }}</strong>
+                                    {% if student.email %}
+                                        <div class="sm-text-muted" style="font-size: 12px;">{{ student.email }}</div>
+                                    {% endif %}
+                                </td>
+                                <td><span class="sm-pill sm-pill-info">{{ student.grade }}</span></td>
+                                <td>
+                                    {% if student.gender == 'M' %}Masculin{% elif student.gender == 'F' %}Feminin{% else %}Autre{% endif %}
+                                </td>
+                                <td>
+                                    {% if student.gpa %}
+                                        {% if student.gpa >= 16 %}
+                                            <span class="sm-pill sm-pill-success">{{ student.gpa|floatformat:2 }}</span>
+                                        {% elif student.gpa >= 12 %}
+                                            <span class="sm-pill sm-pill-info">{{ student.gpa|floatformat:2 }}</span>
+                                        {% elif student.gpa >= 10 %}
+                                            <span class="sm-pill sm-pill-warning">{{ student.gpa|floatformat:2 }}</span>
+                                        {% else %}
+                                            <span class="sm-pill sm-pill-danger">{{ student.gpa|floatformat:2 }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="sm-pill sm-pill-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ student.parent_name|default:"N/A" }}</td>
+                                <td>
+                                    {% if student.status == 'active' %}
+                                        <span class="sm-pill sm-pill-success">Actif</span>
+                                    {% elif student.status == 'inactive' %}
+                                        <span class="sm-pill sm-pill-muted">Inactif</span>
+                                    {% elif student.status == 'graduated' %}
+                                        <span class="sm-pill sm-pill-info">Diplome</span>
+                                    {% elif student.status == 'suspended' %}
+                                        <span class="sm-pill sm-pill-danger">Suspendu</span>
+                                    {% endif %}
+                                </td>
+                                <td><span class="sm-text-muted" style="font-size: 12px;">{{ student.created_at|date:"d/m/Y" }}</span></td>
+                                <td>
+                                    <div class="sm-actions">
+                                        <a href="{% url 'students:student_detail' student.id %}" class="sm-btn-outline">Voir</a>
+                                        <a href="{% url 'students:student_edit' student.id %}" class="sm-btn-outline">Editer</a>
+                                        <a href="{% url 'students:student_delete' student.id %}" class="sm-btn-outline">Supprimer</a>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for student in students %}
-                                <tr>
-                                    <td>
-                                        <code style="background-color: #f0f0f0; padding: 3px 6px; border-radius: 3px;">
-                                            {{ student.student_id }}
-                                        </code>
-                                    </td>
-                                    <td>
-                                        <strong>{{ student.full_name }}</strong>
-                                        {% if student.email %}
-                                            <br><small class="text-muted">{{ student.email }}</small>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-info">{{ student.grade }}</span>
-                                    </td>
-                                    <td>
-                                        {% if student.gender == 'M' %}
-                                            <i class="fas fa-mars" style="color: #007bff;"></i> Masculin
-                                        {% elif student.gender == 'F' %}
-                                            <i class="fas fa-venus" style="color: #ff1493;"></i> Féminin
-                                        {% else %}
-                                            <i class="fas fa-genderless"></i> Autre
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if student.gpa %}
-                                            {% if student.gpa >= 16 %}
-                                                <span class="badge bg-success">{{ student.gpa|floatformat:2 }}</span>
-                                            {% elif student.gpa >= 12 %}
-                                                <span class="badge bg-info">{{ student.gpa|floatformat:2 }}</span>
-                                            {% elif student.gpa >= 10 %}
-                                                <span class="badge bg-warning">{{ student.gpa|floatformat:2 }}</span>
-                                            {% else %}
-                                                <span class="badge bg-danger">{{ student.gpa|floatformat:2 }}</span>
-                                            {% endif %}
-                                        {% else %}
-                                            <span class="badge bg-secondary">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {{ student.parent_name|default:"N/A" }}
-                                    </td>
-                                    <td>
-                                        {% if student.status == 'active' %}
-                                            <span class="badge bg-success">Actif</span>
-                                        {% elif student.status == 'inactive' %}
-                                            <span class="badge bg-secondary">Inactif</span>
-                                        {% elif student.status == 'graduated' %}
-                                            <span class="badge bg-info">Diplômé</span>
-                                        {% elif student.status == 'suspended' %}
-                                            <span class="badge bg-danger">Suspendu</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">{{ student.created_at|date:"d/m/Y" }}</small>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{% url 'students:student_detail' student.id %}" class="btn btn-info">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{% url 'students:student_edit' student.id %}" class="btn btn-warning">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'students:student_delete' student.id %}" class="btn btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Pagination -->
-                {% if page_obj.has_other_pages %}
-                    <nav aria-label="Page navigation" class="mt-4">
-                        <ul class="pagination justify-content-center">
-                            {% if page_obj.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=1">Première</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Précédent</a>
-                                </li>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if page_obj.has_other_pages %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination sm-pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">Premiere</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Precedent</a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
                             {% endif %}
-                            
-                            {% for num in page_obj.paginator.page_range %}
-                                {% if page_obj.number == num %}
-                                    <li class="page-item active">
-                                        <span class="page-link">{{ num }}</span>
-                                    </li>
-                                {% else %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if page_obj.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Suivant</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Dernière</a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                {% endif %}
-            {% else %}
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i> Aucun élève trouvé
-                </div>
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Suivant</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Derniere</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
             {% endif %}
-        </div>
+        {% else %}
+            <div class="alert alert-info">Aucun eleve trouve.</div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
