@@ -4,34 +4,41 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>School Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
-        --bg: #0b0d12;
-        --bg-soft: #111522;
-        --ink: #f4f7ff;
-        --muted: #a6b0cc;
-        --accent: #6ff3d6;
-        --accent-2: #6aa7ff;
-        --card: #151b2c;
-        --border: rgba(255, 255, 255, 0.08);
-        --glow: rgba(111, 243, 214, 0.25);
+        --bg: #f7f8fb;
+        --bg-ink: #0b0f1a;
+        --panel: #ffffff;
+        --ink: #0b0f1a;
+        --muted: #5f6b7a;
+        --line: rgba(16, 24, 40, 0.08);
+        --accent: #0ea5a4;
+        --accent-ink: #0b1f1f;
+        --shadow: 0 20px 50px rgba(10, 20, 30, 0.08);
+        --radius-lg: 22px;
+        --radius-md: 14px;
       }
       * {
         box-sizing: border-box;
       }
       body {
         margin: 0;
-        font-family: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+        font-family: "Sora", system-ui, sans-serif;
         color: var(--ink);
-        background: radial-gradient(circle at 10% 15%, #1b2845 0%, transparent 45%),
-          radial-gradient(circle at 85% 5%, #2b1b45 0%, transparent 35%),
-          var(--bg);
+        background: radial-gradient(circle at 10% 10%, rgba(14, 165, 164, 0.08), transparent 45%),
+          linear-gradient(180deg, #f7f8fb 0%, #f1f4f8 100%);
         min-height: 100vh;
       }
       .wrap {
-        max-width: 1100px;
+        max-width: 1180px;
         margin: 0 auto;
-        padding: 48px 24px 96px;
+        padding: 40px 24px 96px;
       }
       .topbar {
         display: flex;
@@ -44,85 +51,154 @@
         align-items: center;
         gap: 12px;
         font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
+        letter-spacing: 0.02em;
       }
       .logo-mark {
-        width: 42px;
-        height: 42px;
+        width: 40px;
+        height: 40px;
         border-radius: 12px;
-        background: linear-gradient(140deg, var(--accent), var(--accent-2));
-        box-shadow: 0 0 30px var(--glow);
+        background: linear-gradient(145deg, #0ea5a4, #0f766e);
         display: grid;
         place-items: center;
-        color: #0b0d12;
+        color: #f7fffe;
         font-size: 18px;
         font-weight: 800;
+      }
+      .top-links {
+        display: inline-flex;
+        gap: 18px;
+        align-items: center;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .top-links a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .top-links a:hover {
+        color: var(--ink);
       }
       .cta {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 18px;
+        padding: 12px 18px;
         border-radius: 999px;
-        background: linear-gradient(120deg, var(--accent), var(--accent-2));
-        color: #0b0d12;
+        background: var(--ink);
+        color: #ffffff;
         font-weight: 700;
         text-decoration: none;
-        box-shadow: 0 12px 30px var(--glow);
+        box-shadow: var(--shadow);
+      }
+      .ghost {
+        padding: 12px 18px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--ink);
+        text-decoration: none;
+        font-weight: 600;
+        background: #ffffff;
       }
       .hero {
         display: grid;
-        gap: 24px;
-        margin-top: 48px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 32px;
+        margin-top: 56px;
+        align-items: center;
       }
       h1 {
-        font-size: clamp(36px, 5vw, 56px);
+        font-size: clamp(36px, 5vw, 60px);
         margin: 0;
         line-height: 1.05;
       }
       .lead {
         color: var(--muted);
         font-size: 18px;
-        max-width: 720px;
+        max-width: 560px;
       }
-      .panel {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .hero-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 18px;
+        animation: rise 0.8s ease both;
+      }
+      .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(14, 165, 164, 0.12);
+        color: #0f4f4f;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .section {
+        margin-top: 56px;
+      }
+      .section-title {
+        font-size: 22px;
+        margin: 0 0 8px;
+      }
+      .section-lead {
+        color: var(--muted);
+        max-width: 620px;
       }
       .grid {
         display: grid;
         gap: 16px;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         margin-top: 24px;
       }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 10px;
+      }
       .card h3 {
-        margin: 0 0 8px;
-        font-size: 18px;
+        margin: 0;
+        font-size: 17px;
       }
       .card p {
-        margin: 0 0 12px;
+        margin: 0;
         color: var(--muted);
+        font-size: 14px;
       }
-      .card a {
+      .link {
         color: var(--accent);
         text-decoration: none;
         font-weight: 600;
-      }
-      .card a:hover {
-        text-decoration: underline;
-      }
-      .section-title {
-        font-size: 20px;
-        margin: 0 0 16px;
+        font-size: 14px;
       }
       .split {
         display: grid;
         gap: 16px;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+      .mini {
+        padding: 16px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
+        background: #ffffff;
       }
       .quote {
         border-left: 2px solid var(--accent);
@@ -131,14 +207,41 @@
         font-style: italic;
       }
       footer {
-        margin-top: 40px;
+        margin-top: 56px;
         color: var(--muted);
         font-size: 14px;
+      }
+      .fade-in {
+        animation: fade 0.9s ease both;
+      }
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
       @media (max-width: 720px) {
         .topbar {
           flex-direction: column;
           align-items: flex-start;
+        }
+        .top-links {
+          width: 100%;
+          justify-content: space-between;
         }
       }
     </style>
@@ -150,70 +253,115 @@
           <div class="logo-mark">SM</div>
           <span>School Management</span>
         </div>
-        <a class="cta" href="/accounts/login/">Se connecter</a>
+        <div class="top-links">
+          <a href="#modules">Modules</a>
+          <a href="#securite">Securite</a>
+          <a href="#contact">Contact</a>
+          <a class="cta" href="/accounts/login/">Connexion</a>
+        </div>
       </div>
 
       <section class="hero">
-        <h1>Un cockpit premium pour piloter vos ecoles.</h1>
-        <p class="lead">
-          Suivi des eleves, finances, resultats et operations academiques dans une interface rapide,
-          claire et securisee.
-        </p>
+        <div class="fade-in">
+          <p class="badge">Plateforme SaaS ecoles privees</p>
+          <h1>Un pilotage clair, moderne et securise pour votre ecole.</h1>
+          <p class="lead">
+            Centralisez inscriptions, notes, paiements et operations academiques dans une interface
+            minimaliste, fiable et rapide. Concu pour les directions et equipes admin.
+          </p>
+          <div class="hero-actions">
+            <a class="cta" href="/accounts/login/">Acceder a la plateforme</a>
+            <a class="ghost" href="/admin/">Acceder au back-office</a>
+          </div>
+        </div>
+        <div class="hero-card">
+          <strong>Vue globale instantanee</strong>
+          <p class="lead" style="font-size: 15px;">
+            Suivi des effectifs, encaissements, presence et performance academique.
+          </p>
+          <div class="hero-badges">
+            <span class="badge">Multi-ecoles</span>
+            <span class="badge">Journal d activite</span>
+            <span class="badge">Exports PDF</span>
+          </div>
+          <div class="split">
+            <div class="mini">
+              <strong>+18%</strong>
+              <p class="lead" style="font-size: 13px;">Revenus securises</p>
+            </div>
+            <div class="mini">
+              <strong>98%</strong>
+              <p class="lead" style="font-size: 13px;">Operations tracees</p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section class="panel">
+      <section class="section" id="modules">
         <h2 class="section-title">Modules principaux</h2>
+        <p class="section-lead">
+          Une architecture claire qui couvre l ensemble du cycle scolaire, sans surcharge visuelle.
+        </p>
         <div class="grid">
           <article class="card">
-            <h3>Administration</h3>
-            <p>Configuration generale, roles et droits.</p>
-            <a href="/admin/">Ouvrir le back-office</a>
+            <h3>Direction</h3>
+            <p>Vue executive, KPIs, alertes et arbitrages rapides.</p>
+            <a class="link" href="/accounts/dashboard/">Ouvrir le dashboard</a>
           </article>
           <article class="card">
-            <h3>Comptes</h3>
-            <p>Acces, profils et tableaux de bord.</p>
-            <a href="/accounts/dashboard/">Aller au module comptes</a>
+            <h3>Comptes & acces</h3>
+            <p>Gestion des roles, securite, journaux et permissions.</p>
+            <a class="link" href="/admin/">Acceder au back-office</a>
           </article>
           <article class="card">
-            <h3>Etudiants</h3>
-            <p>Gestion des inscriptions et suivi.</p>
-            <a href="/students/">Voir les etudiants</a>
+            <h3>Eleves</h3>
+            <p>Suivi des inscriptions, presence, dossiers et familles.</p>
+            <a class="link" href="/students/">Voir les eleves</a>
           </article>
           <article class="card">
             <h3>Academics</h3>
-            <p>Classes, matieres, notes et resultats.</p>
-            <a href="/academics/classes/">Voir les classes</a>
+            <p>Classes, notes, bulletins et performances consolidees.</p>
+            <a class="link" href="/academics/classes/">Voir les classes</a>
           </article>
         </div>
       </section>
 
-      <section class="panel">
-        <h2 class="section-title">Avantages</h2>
+      <section class="section" id="securite">
+        <h2 class="section-title">Securite et conformite</h2>
+        <p class="section-lead">Des controles clairs, une tracabilite continue, un stockage prudent.</p>
         <div class="split">
-          <div>
-            <p>• Isolation multi-ecoles et securite renforcee.</p>
-            <p>• Flux academiques et financiers unifies.</p>
-            <p>• Exports PDF et tableaux de bord instantanes.</p>
+          <div class="mini">
+            <strong>Acces role-based</strong>
+            <p class="lead" style="font-size: 14px;">
+              Droits par ecole, equipe et fonction avec verification continue.
+            </p>
           </div>
-          <div>
-            <p>• Performances optimisées pour les petites et grandes ecoles.</p>
-            <p>• Acces role-based pour direction, enseignants, compta.</p>
-            <p>• Infrastructure cloud prete pour la croissance.</p>
+          <div class="mini">
+            <strong>Tracabilite</strong>
+            <p class="lead" style="font-size: 14px;">
+              Journal d activite centralise pour audits et controle interne.
+            </p>
+          </div>
+          <div class="mini">
+            <strong>Donnees maitrisees</strong>
+            <p class="lead" style="font-size: 14px;">
+              Sauvegardes et exports PDF pour conserver la preuve academique.
+            </p>
           </div>
         </div>
       </section>
 
-      <section class="panel">
-        <h2 class="section-title">Temoignages</h2>
+      <section class="section">
+        <h2 class="section-title">Ils pilotent deja plus vite</h2>
         <div class="split">
-          <p class="quote">"La gestion des classes est devenue fluide. Les bulletins sortent en 1 clic."</p>
-          <p class="quote">"La visibilite sur les paiements a elimine les retards et les erreurs."</p>
-          <p class="quote">"Interface claire, aucune formation longue pour l'equipe."</p>
+          <p class="quote">"Pilotage ultra clair, on decide vite et on execute sans friction."</p>
+          <p class="quote">"Le reporting academique est devenu un reflexe quotidien."</p>
+          <p class="quote">"Les equipes adoptent la plateforme en moins d une semaine."</p>
         </div>
       </section>
 
-      <footer>
-        <span>Besoin d'aide ? Contactez l'administrateur de votre etablissement.</span>
+      <footer id="contact">
+        <span>Besoin d aide ? Contactez l administrateur de votre etablissement.</span>
       </footer>
     </div>
   </body>
