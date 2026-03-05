@@ -8,6 +8,8 @@ services:
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: school_management.settings_production
+      - key: PYTHON_VERSION
+        value: "3.12.3"
       - key: SECRET_KEY
         value: ""
       - key: DATABASE_URL
