@@ -322,9 +322,9 @@
         </div>
     </nav>
     
-    {% if user.is_authenticated %}
-        <div class="container-fluid">
-            <div class="row">
+    <div class="container-fluid">
+        <div class="row">
+            {% if user.is_authenticated %}
                 <!-- Sidebar -->
                 <nav class="col-md-3 col-lg-2 sidebar">
                     <div class="nav flex-column">
@@ -389,27 +389,23 @@
                         </a>
                     </div>
                 </nav>
+            {% endif %}
+            
+            <!-- Content -->
+            <main class="{% if user.is_authenticated %}col-md-9 col-lg-10{% else %}col-12{% endif %} content-wrapper">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
                 
-                <!-- Content -->
-                <main class="col-md-9 col-lg-10 content-wrapper">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    
-                    {% block content %}{% endblock %}
-                </main>
-            </div>
+                {% block content %}{% endblock %}
+            </main>
         </div>
-    {% else %}
-        <main>
-            {% block content %}{% endblock %}
-        </main>
-    {% endif %}
+    </div>
     
     <!-- Footer -->
     <footer>

@@ -30,8 +30,17 @@ class SchoolDataMixin(UserPassesTestMixin):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['school'] = self.request.user.school
+        context['school'] = getattr(self.request.user, 'school', None)
         return context
+
+
+def _get_school_or_none(request):
+    school = getattr(request.user, 'school', None)
+    if school:
+        return school
+    if request.user.is_superuser:
+        return None
+    return None
 
 
 # ==================== CLASSES VIEWS ====================
@@ -39,8 +48,12 @@ class SchoolDataMixin(UserPassesTestMixin):
 @login_required
 def class_list(request):
     """List all classes for the school"""
-    school = request.user.school
-    classes = Class.objects.filter(school=school).select_related('academic_year')
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        messages.error(request, "Aucune école associée à votre compte.")
+        return redirect('accounts:permission_denied')
+
+    classes = Class.objects.all().select_related('academic_year') if school is None else Class.objects.filter(school=school).select_related('academic_year')
     
     # Search
     search_query = request.GET.get('search', '')
@@ -65,18 +78,36 @@ def class_list(request):
     total_classes = classes.count()
     total_students = sum([c.student_count for c in classes])
 
+    context = {
+        'classes': classes,
+        'search_query': search_query,
+        'level_filter': level_filter,
+        'year_filter': year_filter,
+        'total_classes': total_classes,
+        'total_students': total_students,
+        'levels': Class.LEVEL_CHOICES,
+        'academic_years': AcademicYear.objects.all() if school is None else school.academic_years.all(),
+    }
+    
+    return render(request, 'academics/class_list.html', context)
+
 
 @login_required
 def generate_report_card_pdf(request, pk):
     """Generate a downloadable PDF report card for a student for the latest term (or specified term via ?term=)`"""
-    school = request.user.school
-    student = get_object_or_404(__import__('apps.students.models', fromlist=['Student']).Student, pk=pk, school=school)
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
+    if school is None:
+        student = get_object_or_404(__import__('apps.students.models', fromlist=['Student']).Student, pk=pk)
+    else:
+        student = get_object_or_404(__import__('apps.students.models', fromlist=['Student']).Student, pk=pk, school=school)
 
     term_id = request.GET.get('term')
     if term_id:
-        term = get_object_or_404(Term, pk=term_id, school=school)
+        term = get_object_or_404(Term, pk=term_id, school=school) if school else get_object_or_404(Term, pk=term_id)
     else:
-        term = Term.objects.filter(school=school).order_by('-start_date').first()
+        term = Term.objects.filter(school=school).order_by('-start_date').first() if school else Term.objects.order_by('-start_date').first()
 
     # Grades for this student and term
     grades = Grade.objects.filter(student=student, term=term).select_related('subject') if term else []
@@ -91,7 +122,10 @@ def generate_report_card_pdf(request, pk):
     average = round(total_weighted / total_coeff, 2) if total_coeff > 0 else 0
 
     # Calculate class rank (students with same grade string)
-    classmates = __import__('apps.students.models', fromlist=['Student']).Student.objects.filter(school=school, grade=student.grade)
+    if school is None:
+        classmates = __import__('apps.students.models', fromlist=['Student']).Student.objects.filter(grade=student.grade)
+    else:
+        classmates = __import__('apps.students.models', fromlist=['Student']).Student.objects.filter(school=school, grade=student.grade)
     ranking = []
     for s in classmates:
         s_grades = Grade.objects.filter(student=s, term=term).select_related('subject') if term else []
@@ -181,26 +215,19 @@ def generate_report_card_pdf(request, pk):
     filename = f"bulletin_{student.student_id}_{term.name if term else 'all'}.pdf"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
-    
-    context = {
-        'classes': classes,
-        'search_query': search_query,
-        'level_filter': level_filter,
-        'year_filter': year_filter,
-        'total_classes': total_classes,
-        'total_students': total_students,
-        'levels': Class.LEVEL_CHOICES,
-        'academic_years': school.academic_years.all(),
-    }
-    
-    return render(request, 'academics/class_list.html', context)
 
 
 @login_required
 def class_detail(request, pk):
     """View class details"""
-    school = request.user.school
-    class_obj = get_object_or_404(Class, pk=pk, school=school)
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
+
+    if school is None:
+        class_obj = get_object_or_404(Class, pk=pk)
+    else:
+        class_obj = get_object_or_404(Class, pk=pk, school=school)
     
     # Get subjects for this class
     class_subjects = class_obj.class_subjects.select_related('subject')
@@ -220,20 +247,23 @@ def class_detail(request, pk):
 @permission_required('academics.add_class', raise_exception=True)
 def class_create(request):
     """Create a new class"""
-    school = request.user.school
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
     
     if request.method == 'POST':
         form = ClassForm(request.POST)
         if form.is_valid():
             class_obj = form.save(commit=False)
-            class_obj.school = school
+            if school is not None:
+                class_obj.school = school
             class_obj.save()
             messages.success(request, f"Classe '{class_obj.name}' créée avec succès.")
             return redirect('academics:class_detail', pk=class_obj.pk)
     else:
         form = ClassForm()
         # Filter academic years for this school
-        form.fields['academic_year'].queryset = AcademicYear.objects.filter(school=school)
+        form.fields['academic_year'].queryset = AcademicYear.objects.filter(school=school) if school else AcademicYear.objects.all()
     
     context = {'form': form, 'action': 'Créer'}
     return render(request, 'academics/class_form.html', context)
@@ -243,8 +273,14 @@ def class_create(request):
 @permission_required('academics.change_class', raise_exception=True)
 def class_update(request, pk):
     """Update a class"""
-    school = request.user.school
-    class_obj = get_object_or_404(Class, pk=pk, school=school)
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
+
+    if school is None:
+        class_obj = get_object_or_404(Class, pk=pk)
+    else:
+        class_obj = get_object_or_404(Class, pk=pk, school=school)
     
     if request.method == 'POST':
         form = ClassForm(request.POST, instance=class_obj)
@@ -254,7 +290,7 @@ def class_update(request, pk):
             return redirect('academics:class_detail', pk=class_obj.pk)
     else:
         form = ClassForm(instance=class_obj)
-        form.fields['academic_year'].queryset = AcademicYear.objects.filter(school=school)
+        form.fields['academic_year'].queryset = AcademicYear.objects.filter(school=school) if school else AcademicYear.objects.all()
     
     context = {'form': form, 'class': class_obj, 'action': 'Modifier'}
     return render(request, 'academics/class_form.html', context)
@@ -264,8 +300,14 @@ def class_update(request, pk):
 @permission_required('academics.delete_class', raise_exception=True)
 def class_delete(request, pk):
     """Delete a class"""
-    school = request.user.school
-    class_obj = get_object_or_404(Class, pk=pk, school=school)
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
+
+    if school is None:
+        class_obj = get_object_or_404(Class, pk=pk)
+    else:
+        class_obj = get_object_or_404(Class, pk=pk, school=school)
     
     if request.method == 'POST':
         name = class_obj.name
@@ -282,8 +324,11 @@ def class_delete(request, pk):
 @login_required
 def subject_list(request):
     """List all subjects for the school"""
-    school = request.user.school
-    subjects = Subject.objects.filter(school=school)
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
+
+    subjects = Subject.objects.all() if school is None else Subject.objects.filter(school=school)
     
     # Search
     search_query = request.GET.get('search', '')
@@ -323,8 +368,11 @@ def subject_list(request):
 @login_required
 def subject_detail(request, pk):
     """View subject details"""
-    school = request.user.school
-    subject = get_object_or_404(Subject, pk=pk, school=school)
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
+
+    subject = get_object_or_404(Subject, pk=pk) if school is None else get_object_or_404(Subject, pk=pk, school=school)
     
     # Get classes that have this subject
     class_subjects = subject.class_subjects.select_related('class_obj')
@@ -342,13 +390,16 @@ def subject_detail(request, pk):
 @permission_required('academics.add_subject', raise_exception=True)
 def subject_create(request):
     """Create a new subject"""
-    school = request.user.school
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
     
     if request.method == 'POST':
         form = SubjectForm(request.POST)
         if form.is_valid():
             subject = form.save(commit=False)
-            subject.school = school
+            if school is not None:
+                subject.school = school
             subject.save()
             messages.success(request, f"Matière '{subject.name}' créée avec succès.")
             return redirect('academics:subject_detail', pk=subject.pk)
@@ -363,8 +414,11 @@ def subject_create(request):
 @permission_required('academics.change_subject', raise_exception=True)
 def subject_update(request, pk):
     """Update a subject"""
-    school = request.user.school
-    subject = get_object_or_404(Subject, pk=pk, school=school)
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
+
+    subject = get_object_or_404(Subject, pk=pk) if school is None else get_object_or_404(Subject, pk=pk, school=school)
     
     if request.method == 'POST':
         form = SubjectForm(request.POST, instance=subject)
@@ -383,8 +437,11 @@ def subject_update(request, pk):
 @permission_required('academics.delete_subject', raise_exception=True)
 def subject_delete(request, pk):
     """Delete a subject"""
-    school = request.user.school
-    subject = get_object_or_404(Subject, pk=pk, school=school)
+    school = _get_school_or_none(request)
+    if not school and not request.user.is_superuser:
+        return redirect('accounts:permission_denied')
+
+    subject = get_object_or_404(Subject, pk=pk) if school is None else get_object_or_404(Subject, pk=pk, school=school)
     
     if request.method == 'POST':
         name = subject.name

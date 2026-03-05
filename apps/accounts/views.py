@@ -61,7 +61,8 @@ class RoleRequiredMixin(LoginRequiredMixin):
             return redirect(self.login_url)
         
         if self.required_roles:
-            if request.user.role not in self.required_roles and not request.user.is_superuser:
+            user_role = getattr(request.user, 'role', None)
+            if user_role not in self.required_roles and not request.user.is_superuser:
                 return redirect('permission_denied')
         
         return super().dispatch(request, *args, **kwargs)
@@ -75,7 +76,8 @@ class SchoolOwnerMixin(LoginRequiredMixin):
         if not request.user.is_authenticated:
             return redirect(self.login_url)
         
-        if not request.user.school and not request.user.is_superuser:
+        user_school = getattr(request.user, 'school', None)
+        if not user_school and not request.user.is_superuser:
             return redirect('permission_denied')
         
         return super().dispatch(request, *args, **kwargs)
@@ -90,10 +92,11 @@ class SchoolDataMixin:
             # Les superusers voient tout
             return None
         
-        if not self.request.user.school:
+        user_school = getattr(self.request.user, 'school', None)
+        if not user_school:
             raise Http404("L'utilisateur n'appartient à aucune école")
         
-        return self.request.user.school
+        return user_school
 
 
 # ============ VUES D'AUTHENTIFICATION ============
@@ -161,19 +164,21 @@ class LogoutView(View):
 def dashboard(request):
     """Dashboard principal avec redirection par rôle"""
     
-    if request.user.is_superuser or request.user.role == 'superadmin':
+    user_role = getattr(request.user, 'role', None)
+
+    if request.user.is_superuser or user_role == 'superadmin':
         return redirect('accounts:admin_dashboard')
     
-    elif request.user.role == 'director':
+    elif user_role == 'director':
         return redirect('accounts:director_dashboard')
     
-    elif request.user.role == 'teacher':
+    elif user_role == 'teacher':
         return redirect('accounts:teacher_dashboard')
     
-    elif request.user.role == 'accountant':
+    elif user_role == 'accountant':
         return redirect('accounts:accountant_dashboard')
     
-    elif request.user.role in ['student', 'parent']:
+    elif user_role in ['student', 'parent']:
         return redirect('accounts:student_dashboard')
     
     # Par défaut
