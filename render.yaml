@@ -2,7 +2,6 @@ services:
   - type: web
     name: school-management
     env: python
-    pythonVersion: 3.12.3
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn school_management.wsgi:application --bind 0.0.0.0:$PORT --workers 3
