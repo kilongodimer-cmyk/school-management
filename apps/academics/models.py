@@ -281,6 +281,8 @@ class Grade(models.Model):
     @property
     def rating(self):
         """Get rating for score (Excellent, Bien, etc)"""
+        if self.score is None:
+            return 'N/A'
         if self.score >= 18:
             return 'Excellent'
         elif self.score >= 16:
@@ -297,6 +299,8 @@ class Grade(models.Model):
     @property
     def status_badge(self):
         """Get CSS color for score"""
+        if self.score is None:
+            return 'secondary'
         if self.score >= 16:
             return 'success'
         elif self.score >= 12:
