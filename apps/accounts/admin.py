@@ -264,9 +264,9 @@ class CustomUserAdmin(BaseUserAdmin):
         )
     is_active_badge.short_description = _("Statut")
     
-    def get_readonly_fields(self, request):
+    def get_readonly_fields(self, request, obj=None):
         """Rendre readonly certains champs"""
-        readonly = super().get_readonly_fields(request)
+        readonly = super().get_readonly_fields(request, obj=obj)
         # Les superusers peuvent modifier tous les champs
         if request.user.is_superuser:
             return readonly
