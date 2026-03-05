@@ -1,0 +1,18 @@
+{% load static %}
+{% extends "admin/base.html" %}
+
+{% block title %}Administration | School Management{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/custom.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <div id="site-name" class="sm-brand">
+    <span class="sm-logo">SM</span>
+    <span class="sm-text">School Management Admin</span>
+  </div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
