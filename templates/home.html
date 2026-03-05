@@ -6,58 +6,106 @@
     <title>School Management</title>
     <style>
       :root {
-        --bg: #f5f1ea;
-        --ink: #1a1a1a;
-        --muted: #6b6b6b;
-        --accent: #0d6b5f;
-        --card: #ffffff;
-        --border: #e3ddd2;
+        --bg: #0b0d12;
+        --bg-soft: #111522;
+        --ink: #f4f7ff;
+        --muted: #a6b0cc;
+        --accent: #6ff3d6;
+        --accent-2: #6aa7ff;
+        --card: #151b2c;
+        --border: rgba(255, 255, 255, 0.08);
+        --glow: rgba(111, 243, 214, 0.25);
+      }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
-        font-family: "Georgia", "Times New Roman", serif;
+        font-family: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
         color: var(--ink);
-        background: radial-gradient(circle at 15% 20%, #e6f1ec, transparent 40%),
-          radial-gradient(circle at 80% 10%, #efe7da, transparent 35%),
+        background: radial-gradient(circle at 10% 15%, #1b2845 0%, transparent 45%),
+          radial-gradient(circle at 85% 5%, #2b1b45 0%, transparent 35%),
           var(--bg);
         min-height: 100vh;
       }
       .wrap {
-        max-width: 960px;
+        max-width: 1100px;
         margin: 0 auto;
-        padding: 56px 24px 80px;
+        padding: 48px 24px 96px;
       }
-      header {
-        display: grid;
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .logo {
+        display: inline-flex;
+        align-items: center;
         gap: 12px;
-        margin-bottom: 28px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .logo-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(140deg, var(--accent), var(--accent-2));
+        box-shadow: 0 0 30px var(--glow);
+        display: grid;
+        place-items: center;
+        color: #0b0d12;
+        font-size: 18px;
+        font-weight: 800;
+      }
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: linear-gradient(120deg, var(--accent), var(--accent-2));
+        color: #0b0d12;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 12px 30px var(--glow);
+      }
+      .hero {
+        display: grid;
+        gap: 24px;
+        margin-top: 48px;
       }
       h1 {
-        font-size: 42px;
+        font-size: clamp(36px, 5vw, 56px);
+        margin: 0;
         line-height: 1.05;
-        margin: 0;
       }
-      p.lead {
-        font-size: 18px;
+      .lead {
         color: var(--muted);
-        margin: 0;
+        font-size: 18px;
+        max-width: 720px;
+      }
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
       }
       .grid {
         display: grid;
         gap: 16px;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        margin-top: 28px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        margin-top: 24px;
       }
-      .card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 18px 20px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-      }
-      .card h2 {
-        font-size: 18px;
+      .card h3 {
         margin: 0 0 8px;
+        font-size: 18px;
+      }
+      .card p {
+        margin: 0 0 12px;
+        color: var(--muted);
       }
       .card a {
         color: var(--accent);
@@ -67,55 +115,105 @@
       .card a:hover {
         text-decoration: underline;
       }
-      .badge {
-        display: inline-block;
-        background: #e8f3f0;
-        color: #0b4f46;
-        border-radius: 999px;
-        padding: 6px 10px;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
+      .section-title {
+        font-size: 20px;
+        margin: 0 0 16px;
+      }
+      .split {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+      .quote {
+        border-left: 2px solid var(--accent);
+        padding-left: 12px;
+        color: var(--muted);
+        font-style: italic;
       }
       footer {
-        margin-top: 36px;
-        font-size: 14px;
+        margin-top: 40px;
         color: var(--muted);
+        font-size: 14px;
+      }
+      @media (max-width: 720px) {
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
       }
     </style>
   </head>
   <body>
     <div class="wrap">
-      <header>
-        <span class="badge">SaaS scolaire</span>
-        <h1>Bienvenue sur votre plateforme School Management</h1>
-        <p class="lead">
-          Acces rapide aux modules essentiels. Connectez-vous via l'administration pour commencer.
-        </p>
-      </header>
+      <div class="topbar">
+        <div class="logo">
+          <div class="logo-mark">SM</div>
+          <span>School Management</span>
+        </div>
+        <a class="cta" href="/accounts/login/">Se connecter</a>
+      </div>
 
-      <section class="grid">
-        <article class="card">
-          <h2>Administration</h2>
-          <p><a href="/admin/">Ouvrir le back-office</a></p>
-        </article>
-        <article class="card">
-          <h2>Comptes</h2>
-          <p><a href="/accounts/">Module comptes</a></p>
-        </article>
-        <article class="card">
-          <h2>Etudiants</h2>
-          <p><a href="/students/">Module etudiants</a></p>
-        </article>
-        <article class="card">
-          <h2>Academics</h2>
-          <p><a href="/academics/">Module academic</a></p>
-        </article>
+      <section class="hero">
+        <h1>Un cockpit premium pour piloter vos ecoles.</h1>
+        <p class="lead">
+          Suivi des eleves, finances, resultats et operations academiques dans une interface rapide,
+          claire et securisee.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Modules principaux</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Administration</h3>
+            <p>Configuration generale, roles et droits.</p>
+            <a href="/admin/">Ouvrir le back-office</a>
+          </article>
+          <article class="card">
+            <h3>Comptes</h3>
+            <p>Acces, profils et tableaux de bord.</p>
+            <a href="/accounts/dashboard/">Aller au module comptes</a>
+          </article>
+          <article class="card">
+            <h3>Etudiants</h3>
+            <p>Gestion des inscriptions et suivi.</p>
+            <a href="/students/">Voir les etudiants</a>
+          </article>
+          <article class="card">
+            <h3>Academics</h3>
+            <p>Classes, matieres, notes et resultats.</p>
+            <a href="/academics/classes/">Voir les classes</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Avantages</h2>
+        <div class="split">
+          <div>
+            <p>• Isolation multi-ecoles et securite renforcee.</p>
+            <p>• Flux academiques et financiers unifies.</p>
+            <p>• Exports PDF et tableaux de bord instantanes.</p>
+          </div>
+          <div>
+            <p>• Performances optimisées pour les petites et grandes ecoles.</p>
+            <p>• Acces role-based pour direction, enseignants, compta.</p>
+            <p>• Infrastructure cloud prete pour la croissance.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Temoignages</h2>
+        <div class="split">
+          <p class="quote">"La gestion des classes est devenue fluide. Les bulletins sortent en 1 clic."</p>
+          <p class="quote">"La visibilite sur les paiements a elimine les retards et les erreurs."</p>
+          <p class="quote">"Interface claire, aucune formation longue pour l'equipe."</p>
+        </div>
       </section>
 
       <footer>
-        <span>Si une page n'existe pas encore, verifiez la configuration des routes Django.</span>
+        <span>Besoin d'aide ? Contactez l'administrateur de votre etablissement.</span>
       </footer>
     </div>
   </body>
