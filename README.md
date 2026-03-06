@@ -341,13 +341,17 @@ python manage.py compilemessages
 - [django-environ](https://django-environ.readthedocs.io/)
 - [Celery](https://docs.celeryproject.org/)
 
+## 🔗 Dépôt GitHub
+
+URL du dépôt : [https://github.com/kilongodimer-cmyk/school-management](https://github.com/kilongodimer-cmyk/school-management)
+
 ## 📄 Licence
 
 MIT
 
 ## 👨‍💻 Support
 
-Pour l'aide et le support, créez une issue dans le repository.
+Pour l'aide et le support, créez une issue dans le repository : https://github.com/kilongodimer-cmyk/school-management/issues
 
 ---
 
